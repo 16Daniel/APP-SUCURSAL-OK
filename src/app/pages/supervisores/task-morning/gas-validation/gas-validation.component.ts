@@ -287,10 +287,10 @@ export class GasValidationComponent implements OnInit {
     if(this.radioValue === "2"){
       this.visibleGuardar = false;
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'PAGOS',
-      message: 'VALIDAR QUE LOS PAGOS SE ENCUENTREN <BR>AL CORRIENTE CON ADMINISTRACION!',
+      message: 'VALIDAR QUE LOS PAGOS SE ENCUENTREN <BR><BR>AL CORRIENTE CON ADMINISTRACION!',
       mode: 'ios',
       buttons: ['OK'],
     });
@@ -300,7 +300,7 @@ export class GasValidationComponent implements OnInit {
       const { role } = await alert.onDidDismiss();
       console.log('onDidDismiss resolved with role', role);
       this.load.presentLoading('Guardando..');
-      this.save();
+      //this.save();
     }
     else{
       if(this.data.comment == undefined || this.data.comment == null || this.data.comment == "" || this.data.amount == undefined || this.data.amount == null || this.data.photoValidationGas.length == 0){
@@ -313,10 +313,10 @@ export class GasValidationComponent implements OnInit {
         if(this.data.amount < 40 ){
           this.visibleGuardar = false;
           const alert = await this.alertController.create({
-            cssClass: 'my-custom-class',
+            cssClass: 'custom-alert',
             header: 'IMPORTANTE',
             subHeader: 'PORCENTAJE DE GAS',
-            message: 'ESTAS DEBAJO DEL 40% <BR>SOLICITA TU RECARGA DE GAS!',
+            message: 'ESTAS DEBAJO DEL 40% <BR><BR>SOLICITA TU RECARGA DE GAS!',
             mode: 'ios',
             buttons: ['OK'],
           });
@@ -326,12 +326,12 @@ export class GasValidationComponent implements OnInit {
            const { role } = await alert.onDidDismiss();
            console.log('onDidDismiss resolved with role', role);
            this.load.presentLoading('Guardando..');
-           this.save();
+           //this.save();
           }
         else{
           this.visibleGuardar = false;
           this.load.presentLoading('Guardando..');
-          this.save();
+          //this.save();
         }
 
       }
