@@ -58,7 +58,7 @@
       <ion-row size="12" *ngIf="voladoEfectivo">
         <ion-col size="4">
           <span class="valueVolado">
-           Actualmente hay  <b>
+           ACTUALMENTE HAY  <b>
              {{ voladoEfectivo.message | currency}}
            </b>
            
@@ -124,8 +124,8 @@
           </ion-card>
         </ion-col>
         <ion-col size="6">
-          <ion-label>COMENTARIO</ion-label>
-          <ion-card>
+          <ion-label>JUSTIFICACION</ion-label>
+          <ion-card *ngIf="3000 > data.amount">
             <ion-textarea
               [(ngModel)]="data.comment"
               (focus)="activeComment = false"

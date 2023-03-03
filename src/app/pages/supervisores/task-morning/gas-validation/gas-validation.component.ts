@@ -217,7 +217,7 @@ export class GasValidationComponent implements OnInit {
   async alertCampos(){
 
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'CAMPOS',
       message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',
@@ -300,7 +300,7 @@ export class GasValidationComponent implements OnInit {
       const { role } = await alert.onDidDismiss();
       console.log('onDidDismiss resolved with role', role);
       this.load.presentLoading('Guardando..');
-      //this.save();
+      this.save();
     }
     else{
       if(this.data.comment == undefined || this.data.comment == null || this.data.comment == "" || this.data.amount == undefined || this.data.amount == null || this.data.photoValidationGas.length == 0){
@@ -326,12 +326,12 @@ export class GasValidationComponent implements OnInit {
            const { role } = await alert.onDidDismiss();
            console.log('onDidDismiss resolved with role', role);
            this.load.presentLoading('Guardando..');
-           //this.save();
+           this.save();
           }
         else{
           this.visibleGuardar = false;
           this.load.presentLoading('Guardando..');
-          //this.save();
+          this.save();
         }
 
       }

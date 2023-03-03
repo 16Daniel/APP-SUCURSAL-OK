@@ -173,7 +173,8 @@
                 <ion-row size="12">
                   <ion-col size="3" class="ion-align-self-center">
                     <img *ngIf="data[1].isComplete === false" src="./assets/icon/ilustracion_gas.png" alt="" />
-                    <img *ngIf="data[1].isComplete === true" src="./assets/icon/ilustracion_check.png" alt=""/>
+                    <img *ngIf="data[1].isComplete === true && data[1].isPercentageOrComplete == true" src="./assets/icon/ilustracion_check.png" alt=""/>
+                    <img *ngIf="data[1].isComplete === true && data[1].isPercentageOrComplete == false" src="./assets/icon/ilustracion_gas_war.png" alt=""/>
                   </ion-col>
                   <ion-col size="9">
                     <ion-row size="12">
@@ -194,7 +195,8 @@
                         <span class="title-progress-bar">NIVEL DE PROGRESO</span>
                         <br>
                         <ion-progress-bar *ngIf="data[1].isComplete === false" color="danger" value="0"></ion-progress-bar>
-                        <ion-progress-bar *ngIf="data[1].isComplete === true" color="success" value="1"></ion-progress-bar>
+                        <ion-progress-bar *ngIf="data[1].isComplete === true && data[1].isPercentageOrComplete == true" color="success" value="1"></ion-progress-bar>
+                        <ion-progress-bar *ngIf="data[1].isComplete === true && data[1].isPercentageOrComplete == false" color="warning" value="1"></ion-progress-bar>
                         <br>
                         <div class="margin-completado">
                           <span *ngIf="data[1].isComplete === false" class="title-progress-bar">0% COMPLETADO</span>
@@ -412,17 +414,19 @@
                         </div>
                       </ion-col>
                       <ion-col size="12">
-                        
                         <span class="title-progress-bar">NIVEL DE PROGRESO</span>
-                        <br>
-                        <ion-progress-bar *ngIf="data[3].isComplete === false" color="danger" value="0">
-                        </ion-progress-bar>
+                        &nbsp;
                         <ion-progress-bar *ngIf="data[3].isComplete === true" color="success" value="1">
                         </ion-progress-bar>
-                        <br>
+
+                        <ion-progress-bar *ngIf="data[3].isComplete !== true" color="danger" [value]="(1/2) * data[3].percentage">
+                        </ion-progress-bar>
+                        &nbsp;
                         <div class="margin-completado">
-                          <span *ngIf="data[3].isComplete === false" class="title-progress-bar">0% COMPLETADO</span>
-                          <span *ngIf="data[3].isComplete === true" class="title-progress-bar">100% COMPLETADO</span>
+                          <span *ngIf="data[3].isComplete === true" class="title-progress-bar">100%
+                            COMPLETADO</span>
+                          <span *ngIf="data[3].isComplete !== true" class="title-progress-bar">{{(100/2) * data[3].percentage | number: '.1-2'}}%
+                            COMPLETADO</span>
                         </div>
                       </ion-col>
                     </ion-row>
@@ -544,8 +548,8 @@
           <!-- *ngIf="data[2]" -->
           <ion-col size="6">
             <!-- aqui se manda el id de sucursal ya que tiene una lista de registros  -->
-            <ion-card>
-              <!-- <ion-card (click)="productoRiesgo(user.branchId)"> -->
+            <!-- <ion-card> -->
+              <ion-card (click)="productoRiesgo(user.branchId)">
               <ion-card-content>
                 <ion-row size="12">
                   <ion-col size="3" class="ion-align-self-center">
