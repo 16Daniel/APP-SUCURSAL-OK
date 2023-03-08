@@ -24,6 +24,7 @@ export class WaitTablesComponent implements OnInit {
   public turno;
   public createDate = '';
   public visibleGuardar = true;
+  public carga = 0;
 
   public valUsuario = 0;
 
@@ -68,6 +69,7 @@ export class WaitTablesComponent implements OnInit {
       this.getData();
     }
     console.log('fotos count', this.data.photoWaitlistTables.length);
+    this.calculaCarga();
   }
 
   async ngOnInit() { }
@@ -83,6 +85,17 @@ export class WaitTablesComponent implements OnInit {
           console.log('get data', this.data);
         }
       });
+  }
+  calculaCarga(){
+   const dia = new Date();
+   if(dia.getHours() > 13 && dia.getHours() <= 15){
+    console.log('carga 1', dia.getHours());
+    this.carga = 1;
+   }
+   if(dia.getHours() > 15 && dia.getHours() <= 17){
+    console.log('carga 2', dia.getHours());
+    this.carga = 2;
+   }
   }
 
   return() {
@@ -119,7 +132,7 @@ export class WaitTablesComponent implements OnInit {
   async alertCampos(){
 
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'CAMPOS',
       message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',

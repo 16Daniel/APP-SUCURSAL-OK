@@ -30,7 +30,15 @@ export class BanosMatutinoComponent implements OnInit {
   public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
   public activeData = false;
   public createDate = '';
+
+  public radioValue = '1'; 
+  public pick = 0;
+  public pick1 = 0;
+  public pick2 = 0;
+  public pick3 = 0;
+  public pick4 = 0;
   public visibleGuardar = true;
+  public Ractivo = false;
 
   public valUsuario = 0;
 
@@ -48,16 +56,14 @@ export class BanosMatutinoComponent implements OnInit {
   ) { }
   ionViewWillEnter() {
     this.user = JSON.parse(localStorage.getItem('userData'));
-    console.log(this.routerActive.snapshot.paramMap.get('id'));
+    console.log("suc ",this.routerActive.snapshot.paramMap.get('id'));
     this.branchId = this.routerActive.snapshot.paramMap.get('id');
-    if (this.branchId === '0') {
-      console.log('Completar la tarea');
-      this.activeData = true;
-    } else {
-      console.log('Actualizar la tarea');
+
+      console.log('Actualizar la tarea', this.user.branchId);
       this.getData();
 
-    }
+    
+    this.conteoFotos();
 
     this.valUsuario =Number(this.routerActive.snapshot.paramMap.get('us'));
     console.log(this.valUsuario);
@@ -70,23 +76,70 @@ export class BanosMatutinoComponent implements OnInit {
     // window.history.back();
     this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
   }
+  // getData() {
+  //   this.load.presentLoading('Cargando..');
+  //   this.service
+  //     .serviceGeneralGet('BanosMatutino/' + this.branchId)
+  //     .subscribe((resp) => {
+  //       if (resp.success) {
+  //         this.activeData = true;
+  //         this.data = resp.result;
+  //         console.log('get data', this.data);
+  //       }
+  //       this.conteoFotos();
+  //     });
+  //     this.conteoFotos();
+  // }
+
   getData() {
     this.load.presentLoading('Cargando..');
     this.service
-      .serviceGeneralGet('BanosMatutino/' + this.branchId)
+      .serviceGeneralGet('BanosMatutino/' + this.user.branchId+'/'+this.user.id)
       .subscribe((resp) => {
         if (resp.success) {
-          this.activeData = true;
-          this.data = resp.result;
-          console.log('get data', this.data);
+          if (resp.result?.length !== 0 && resp.result !== null) {
+            this.dataId = true; //si hay registro entonces se hara un put
+            this.activeData = true;
+            console.log('si hay registros del dia');
+            this.data = resp.result;
+            console.log('get data', this.data);
+            this.conteoFotos();
+          }
+          else {
+            this.activeData = true;
+            console.log('completar tarea');
+            this.dataId = false; //no hay registro entonces se hara un post
+            this.data.id = 0; 
+
+          }
         }
+        this.conteoFotos();
       });
+      this.conteoFotos();
   }
 
-  async addPhotoToGallery() {
+  conteoFotos(){
+    this.pick1 = this.data.photoBanosMatutinos.filter(pick => pick.type === 1).length;
+    this.pick2 = this.data.photoBanosMatutinos.filter(pick => pick.type === 2).length;
+    this.pick3 = this.data.photoBanosMatutinos.filter(pick => pick.type === 3).length;
+    this.pick4 = this.data.photoBanosMatutinos.filter(pick => pick.type === 4).length;
+
+    if(this.data.comment === "" || this.data.comment === undefined || this.data.comment === null ){
+      if(this.data.comment  !== " "){
+      this.data.comment  = " ";
+      console.log('comentario ', this.data.comment);
+      }
+    }
+
+    }
+
+  async addPhotoToGallery(idType: number) {
+    this.Ractivo = true;
+    this.photoService.limpiaStorage();
     const name = new Date().toISOString();
     await this.photoService.addNewToGallery();
     await this.photoService.loadSaved();
+    console.log('tipo', idType);
 
     // agregaremos las fotos pero con id type de acuerdo al caso
     // al agregar las fotos en storage, las pasamos por lista
@@ -96,6 +149,7 @@ export class BanosMatutinoComponent implements OnInit {
       banosMatutinoId: this.data.id,
       photo: this.photoService.photos[0].webviewPath,
       photoPath: 'jpeg',
+      type: idType,
       createdBy: this.user.id,
       createdDate: this.today,
       updatedBy: this.valUsuario,
@@ -103,6 +157,7 @@ export class BanosMatutinoComponent implements OnInit {
     });
     console.log('fotos Baños', this.data);
     console.log('NUM FOTOS', this.data.photoBanosMatutinos.length);
+    this.conteoFotos();
   }
   public async showActionSheet(photo, position: number) {
     console.log('photo', photo);
@@ -137,7 +192,7 @@ export class BanosMatutinoComponent implements OnInit {
   async alertCampos(){
 
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'CAMPOS',
       message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',
@@ -217,8 +272,24 @@ export class BanosMatutinoComponent implements OnInit {
 
   save() {
     
-    if(this.data.comment == undefined || this.data.comment == null || this.data.comment == "" || this.data.photoBanosMatutinos.length == 0){
-       this.alertCampos();
+    this.pick=0;
+    if(this.radioValue == '1' && this.pick1 !== 0 ){
+      this.pick = 1;
+    }
+    if(this.radioValue == '2' && this.pick2 !== 0 ){
+      this.pick = 1;
+    }
+    if(this.radioValue == '3' && this.pick3 !== 0 ){
+      this.pick = 1;
+    }
+    if(this.radioValue == '4' && this.pick4 !== 0 ){
+      this.pick = 1;
+    }
+    if(this.radioValue == '5' && this.data.comment != " "){
+      this.pick = 1;
+    }
+    if(this.pick === 0){
+      this.alertCampos();
     }
     else{
       this.load.presentLoading('Guardando..');
@@ -251,7 +322,9 @@ export class BanosMatutinoComponent implements OnInit {
           this.load.presentLoading('Guardando..');
           console.log('Resp Serv =>', data);
           this.photoService.deleteAllPhoto(this.data);
-          this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+          window.location.reload();
+          this.Ractivo = false;
+          this.visibleGuardar = true;
         }
       });
   }
@@ -264,7 +337,9 @@ export class BanosMatutinoComponent implements OnInit {
           this.load.presentLoading('Actualizando..');
           console.log('Resp Serv =>', data);
           this.photoService.deleteAllPhoto(this.data);
-          this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+          window.location.reload();
+          this.Ractivo = false;
+          this.visibleGuardar = true;
           this.disabled = false;
         } else {
           this.disabled = false;
@@ -288,6 +363,7 @@ class PhotoTableModel {
   banosMatutinoId: number;
   photoPath: string;
   photo: string;
+  type: number;
   createdBy: number;
   createdDate: Date;
   updatedBy: number;

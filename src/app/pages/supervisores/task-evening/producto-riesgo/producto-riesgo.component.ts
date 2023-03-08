@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ServiceGeneralService } from 'src/app/core/services/service-general/service-general.service';
 import { LoaderComponent } from 'src/app/pages/dialog-general/loader/loader.component';
 import { DatePipe } from '@angular/common';
+import { AlertController } from '@ionic/angular';
 
 
 @Component({
@@ -27,12 +28,18 @@ export class ProductoRiesgoComponent implements OnInit {
   // identificador de nuevo registro
   public newProduct: boolean;
   public createDate = '';
+  public visibleGuardar = true;
+  public descProduct;
+
+  public riesgo = true;
+  public turno;
 
   constructor(
     public router: Router,
     public routerActive: ActivatedRoute,
     public service: ServiceGeneralService,
     public load: LoaderComponent,
+    public alertController: AlertController,
     public datepipe: DatePipe
 
   ) { }
@@ -41,15 +48,22 @@ export class ProductoRiesgoComponent implements OnInit {
     this.user = JSON.parse(localStorage.getItem('userData'));
     console.log('user', this.user);
     this.idProductoRiesgo = this.routerActive.snapshot.paramMap.get('id');
+    this.turno = this.routerActive.snapshot.paramMap.get('turno');
     console.log('id producto en riesgo ', this.idProductoRiesgo);
     this.formartDate();
     this.getData();
+    
   }
 
   ngOnInit() { }
   return() {
     // window.history.back();
-    this.router.navigateByUrl('supervisor/control-vespertino');
+    if (this.turno === '1') {
+      this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+    }
+    else {
+      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1');
+    }
   }
   getData() {
     this.load.presentLoading('Cargando..');
@@ -64,7 +78,7 @@ export class ProductoRiesgoComponent implements OnInit {
               id: 0,
               branchId: this.user.branchId,
               productId: 0,
-              code: '',
+              code: '1',
               comment: '',
               createdBy: this.user.id,
               createdDate: this.createDate,
@@ -74,6 +88,7 @@ export class ProductoRiesgoComponent implements OnInit {
             },
           ];
           this.activeData = true;
+          this.data = this.objProduct;
 
         } else {
           this.newProduct = false;
@@ -108,6 +123,36 @@ export class ProductoRiesgoComponent implements OnInit {
       return;
     }
   }
+  async alertCampos(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'custom-alert',
+      header: 'IMPORTANTE',
+      subHeader: 'CAMPOS',
+      message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',
+      mode: 'ios',
+      buttons: ['OK'],
+    });
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+
+}
+async alertRiesgo(){
+
+  const alert = await this.alertController.create({
+    cssClass: 'custom-alert',
+    header: 'IMPORTANTE',
+    subHeader: 'PRODUCTOS',
+    message: 'ASEGURATE DE NOTIFICAR EL PRODUCTO EN RIESGO A TU REGIONAL',
+    mode: 'ios',
+    buttons: ['OK'],
+  });
+  await alert.present();
+  const { role } = await alert.onDidDismiss();
+  console.log('onDidDismiss resolved with role', role);
+
+}
   formartDate() {
     // 2022-03-11T17:27:00
     console.log('date', this.today);
@@ -137,6 +182,17 @@ export class ProductoRiesgoComponent implements OnInit {
     //   this.updateData();
     // }
   }
+
+  agregarLista(){
+    if(this.data.comment == '' || this.data.comment == undefined){
+    this.data.comment = '' + this.descProduct;
+    console.log('agregado ' , this.descProduct);
+    }
+    else{
+    this.data.comment += ', ' + this.descProduct;
+    console.log('agregado ' , this.descProduct);
+    }
+  }
   addProductRisk() {
     console.log('push');
     this.objProduct.push({
@@ -159,17 +215,70 @@ export class ProductoRiesgoComponent implements OnInit {
     this.objProduct.splice(index, 1);
   }
 
+  myChange($event) {
+    if(this.riesgo == true){
+      this.data.code = '1';
+      this.data.comment = "";
+    }
+    else{this.data.code = '0';}
+  }
+
   save() {
     this.disabled = true;
     // esto se pone aqui por que aun no se estrae la data de un get
-    if (this.newProduct === true) {
+    // if (this.newProduct === true) {
+    //   this.addProductoRiesgo();
+    // } else {
+    //   // this.formartDateUpdate();
+    //   this.updateProductoRiesgo();
+    // }
+
+    if(this.riesgo == false){
+      this.deleteObjProduct(0);
+      this.objProduct.push({
+      id: 0,
+      branchId: this.user.branchId,
+      comment : 'SIN PRODUCTO EN RIESGO',
+      productId : 0,
+      code: '0',
+      createdBy : this.user.id,
+      createdDate: this.createDate,
+      updatedBy: this.user.id,
+      updatedDate: this.createDate,
+      search: '',
+      });
+      
+      console.log('cond 1', this.objProduct);
       this.addProductoRiesgo();
-    } else {
-      // this.formartDateUpdate();
-      this.updateProductoRiesgo();
+    }
+    else{
+     if(this.data.comment === undefined){
+        this.alertCampos();
+        console.log('cond 2', this.data);
+     }
+     else{
+      this.deleteObjProduct(0);
+      this.objProduct.push({
+      id: 0,
+      branchId: this.user.branchId,
+      comment : this.data.comment,
+      productId : 0,
+      code: '1',
+      createdBy : this.user.id,
+      createdDate: this.createDate,
+      updatedBy: this.user.id,
+      updatedDate: this.createDate,
+      search: '',
+      });
+      console.log('cond 3', this.data);
+      this.addProductoRiesgo();
+     }
+      
     }
   }
   addProductoRiesgo() {
+    
+    
     console.log('Obj a guardar =>', this.objProduct);
     this.service
       .serviceGeneralPostWithUrl('RiskProduct', this.objProduct)
@@ -177,11 +286,16 @@ export class ProductoRiesgoComponent implements OnInit {
         if (data.success) {
           this.load.presentLoading(`Guardando..`);
           console.log('Resp Serv =>', data);
+          if(this.objProduct.code === '1'){
+          this.alertRiesgo();
+          }
           this.ionViewWillEnter();
-          this.router.navigateByUrl('supervisor/control-vespertino');
+          this.return();
         }
       });
   }
+
+  
 
   updateProductoRiesgo() {
     this.objProduct.forEach(obj => {

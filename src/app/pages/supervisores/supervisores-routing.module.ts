@@ -61,7 +61,7 @@ const routes: Routes = [
     component: RemisionesComponent,
   },
   {
-    path: 'producto-riesgo/:turno/:id',
+    path: 'producto-riesgo/:turno/:id/:us',
     component: ProductoRiesgoComponent,
   },
   {

@@ -33,6 +33,7 @@ import { APP_ROUTING } from './app-routing.module';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatePipePipe } from './pages/shared/formate-pipe.pipe';
+import { NativeAudio } from '@ionic-native/native-audio/ngx';
 
 
 @NgModule({
@@ -75,6 +76,7 @@ import { FormatePipePipe } from './pages/shared/formate-pipe.pipe';
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     Camera,
     Dialogs,
+    NativeAudio,
     DatePipe,
   ],
   bootstrap: [AppComponent],

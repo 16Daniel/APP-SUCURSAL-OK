@@ -48,10 +48,33 @@
         </ion-col>
       </ion-row>
 
+      <ion-list>
+      <ion-radio-group [(ngModel)]="radioValue">
+<!------------1--------------->
+
+      <ion-row size="12">
+        <ion-col size="12">
+          <ion-item *ngIf="this.pick1 !== 0" color="success">
+            <ion-label>WC</ion-label>
+            <ion-radio slot="end" value="1" [disabled]="Ractivo"></ion-radio>
+          </ion-item>
+
+          <ion-item *ngIf="this.pick1 === 0" color="danger">
+            <ion-label>WC</ion-label>
+            <ion-radio slot="end" value="1" [disabled]="Ractivo"></ion-radio>
+          </ion-item>
+        </ion-col>
+        <ion-col *ngIf="this.radioValue === '1'">
+          <br>
+          <h5 class="description2">WC</h5>
+          <ion-label style="color:#ad182d">TOMAR FOTO DE LOS WC</ion-label>
+        </ion-col>
+      </ion-row>
+
       <ion-row size="12">
 
-        <ion-col size="6" *ngIf="this.data.photoBanosMatutinos.length === 3">
-          <ion-label>FOTOGRAFIA</ion-label>
+        <ion-col size="6" *ngIf="this.pick1 === 3 && this.radioValue === '1'">
+          <ion-label>FOTOGRAFIA </ion-label>
           <ion-card
             style="height: 9rem"
             class="center"
@@ -66,12 +89,12 @@
           </ion-card>
         </ion-col>
 
-        <ion-col size="6" *ngIf="this.data.photoBanosMatutinos.length !== 3">
-          <ion-label>FOTOGRAFIA</ion-label>
+        <ion-col size="6" *ngIf="this.pick1 !== 3 && this.radioValue === '1'">
+          <ion-label>FOTOGRAFIA </ion-label>
           <ion-card
             style="height: 9rem"
             class="center"
-            (click)="addPhotoToGallery()"
+            (click)="addPhotoToGallery(1)"
           >
             <div style="margin-top: 2rem">
               <ion-icon
@@ -83,22 +106,18 @@
         </ion-col>
 
         <ion-col size="6">
-          <ion-label>COMENTARIO</ion-label>
-          <ion-card>
-            <ion-textarea [(ngModel)]="data.comment" rows="6" cols="20" style="margin-top: 2px;"></ion-textarea>
-          </ion-card>
         </ion-col>
       </ion-row>
-      <ion-row size="12">
+      <ion-row size="12" *ngIf="this.radioValue === '1'">
         <ion-col size="6">
           <ion-row>
             <ion-col size="3" *ngFor="let photo of data.photoBanosMatutinos; index as position">
               <!-- se mostara esta imagen si no tiene id  -->
-              <ion-img *ngIf="photo.id === 0 " src="{{ base64 }},{{ photo.photo }}"
+              <ion-img *ngIf="photo.id === 0 && photo.type === 1" src="{{ base64 }},{{ photo.photo }}"
                 (click)="showActionSheet(photo, position)">
               </ion-img>
               <!-- se mostrara esta imagen si esta guardada -->
-              <ion-img *ngIf="photo.id !== 0 " src="{{ url }}{{ photo.photo }}"
+              <ion-img *ngIf="photo.id !== 0 && photo.type === 1" src="{{ url }}{{ photo.photo }}"
                 (click)="deleteImgShowAction(photo.id)">
               </ion-img>
             </ion-col>
@@ -106,6 +125,286 @@
         </ion-col>
         <ion-col size="6"></ion-col>
       </ion-row>
+
+<!------------1--------------->
+
+
+<!------------2--------------->
+
+<ion-row size="12">
+  <ion-col size="12">
+    <ion-item *ngIf="this.pick2 !== 0" color="success">
+      <ion-label>PAPELETAS WC</ion-label>
+      <ion-radio slot="end" value="2" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+
+    <ion-item *ngIf="this.pick2 === 0" color="danger">
+      <ion-label>PAPELETAS WC</ion-label>
+      <ion-radio slot="end" value="2" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+  </ion-col>
+  <ion-col *ngIf="this.radioValue === '2'">
+    <br>
+    <h5 class="description2">PAPELETA WC</h5>
+    <ion-label style="color:#ad182d">TOMAR FOTO DE LAS PAPELETAS WC</ion-label>
+  </ion-col>
+</ion-row>
+
+<ion-row size="12">
+
+  <ion-col size="6" *ngIf="this.pick2 === 3 && this.radioValue === '2'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+   
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6" *ngIf="this.pick2 !== 3 && this.radioValue === '2'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+      (click)="addPhotoToGallery(2)"
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6">
+  </ion-col>
+</ion-row>
+<ion-row size="12" *ngIf="this.radioValue === '2'">
+  <ion-col size="6">
+    <ion-row>
+      <ion-col size="3" *ngFor="let photo of data.photoBanosMatutinos; index as position">
+        <!-- se mostara esta imagen si no tiene id  -->
+        <ion-img *ngIf="photo.id === 0 && photo.type === 2" src="{{ base64 }},{{ photo.photo }}"
+          (click)="showActionSheet(photo, position)">
+        </ion-img>
+        <!-- se mostrara esta imagen si esta guardada -->
+        <ion-img *ngIf="photo.id !== 0 && photo.type === 2" src="{{ url }}{{ photo.photo }}"
+          (click)="deleteImgShowAction(photo.id)">
+        </ion-img>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-col size="6"></ion-col>
+</ion-row>
+<!------------2--------------->
+
+
+
+<!------------3--------------->
+
+<ion-row size="12">
+  <ion-col size="12">
+    <ion-item *ngIf="this.pick3 !== 0" color="success">
+      <ion-label>PAPELETAS LAVABOS</ion-label>
+      <ion-radio slot="end" value="3" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+
+    <ion-item *ngIf="this.pick3 === 0" color="danger">
+      <ion-label>PAPELETAS LAVABOS</ion-label>
+      <ion-radio slot="end" value="3" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+  </ion-col>
+  <ion-col *ngIf="this.radioValue === '3'">
+    <br>
+    <h5 class="description2">PAPELETA LAVABOS</h5>
+    <ion-label style="color:#ad182d">TOMAR FOTO DE LAS PAPELETAS LAVABOS</ion-label>
+  </ion-col>
+</ion-row>
+
+<ion-row size="12">
+
+  <ion-col size="6" *ngIf="this.pick3 === 3 && this.radioValue === '3'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+   
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6" *ngIf="this.pick3 !== 3 && this.radioValue === '3'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+      (click)="addPhotoToGallery(3)"
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6">
+  </ion-col>
+</ion-row>
+<ion-row size="12" *ngIf="this.radioValue === '3'">
+  <ion-col size="6">
+    <ion-row>
+      <ion-col size="3" *ngFor="let photo of data.photoBanosMatutinos; index as position">
+        <!-- se mostara esta imagen si no tiene id  -->
+        <ion-img *ngIf="photo.id === 0 && photo.type === 3" src="{{ base64 }},{{ photo.photo }}"
+          (click)="showActionSheet(photo, position)">
+        </ion-img>
+        <!-- se mostrara esta imagen si esta guardada -->
+        <ion-img *ngIf="photo.id !== 0 && photo.type === 3" src="{{ url }}{{ photo.photo }}"
+          (click)="deleteImgShowAction(photo.id)">
+        </ion-img>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-col size="6"></ion-col>
+</ion-row>
+<!------------3--------------->
+
+
+
+<!------------4--------------->
+
+<ion-row size="12">
+  <ion-col size="12">
+    <ion-item *ngIf="this.pick4 !== 0" color="success">
+      <ion-label>LAVABOS</ion-label>
+      <ion-radio slot="end" value="4" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+
+    <ion-item *ngIf="this.pick4 === 0" color="danger">
+      <ion-label>LAVABOS</ion-label>
+      <ion-radio slot="end" value="4" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+  </ion-col>
+  <ion-col *ngIf="this.radioValue === '4'">
+    <br>
+    <h5 class="description2">LAVABOS</h5>
+    <ion-label style="color:#ad182d">TOMAR FOTO DE LOS LAVABOS</ion-label>
+  </ion-col>
+</ion-row>
+
+<ion-row size="12">
+
+  <ion-col size="6" *ngIf="this.pick4 === 3 && this.radioValue === '4'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+   
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6" *ngIf="this.pick4 !== 3 && this.radioValue === '4'">
+    <ion-label>FOTOGRAFIA</ion-label>
+    <ion-card
+      style="height: 9rem"
+      class="center"
+      (click)="addPhotoToGallery(4)"
+    >
+      <div style="margin-top: 2rem">
+        <ion-icon
+          class="sizePhoto"
+          src="./assets/icon/icon_foto.svg"
+        ></ion-icon>
+      </div>
+    </ion-card>
+  </ion-col>
+
+  <ion-col size="6">
+  </ion-col>
+</ion-row>
+<ion-row size="12" *ngIf="this.radioValue === '4'">
+  <ion-col size="6">
+    <ion-row>
+      <ion-col size="3" *ngFor="let photo of data.photoBanosMatutinos; index as position">
+        <!-- se mostara esta imagen si no tiene id  -->
+        <ion-img *ngIf="photo.id === 0 && photo.type === 4" src="{{ base64 }},{{ photo.photo }}"
+          (click)="showActionSheet(photo, position)">
+        </ion-img>
+        <!-- se mostrara esta imagen si esta guardada -->
+        <ion-img *ngIf="photo.id !== 0 && photo.type === 4" src="{{ url }}{{ photo.photo }}"
+          (click)="deleteImgShowAction(photo.id)">
+        </ion-img>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <ion-col size="6"></ion-col>
+</ion-row>
+<!------------4--------------->
+
+      
+<!------------5--------------->
+<ion-row size="12">
+  <ion-col size="12">
+    <ion-item *ngIf="this.data.comment != ' '" color="success">
+      <ion-label>COMENTARIOS</ion-label>
+      <ion-radio slot="end" value="5" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+
+    <ion-item *ngIf="this.data.comment === undefine || this.data.comment === ' '" color="danger">
+      <ion-label>COMENTARIOS</ion-label>
+      <ion-radio slot="end" value="5" [disabled]="Ractivo"></ion-radio>
+    </ion-item>
+  </ion-col>
+  <ion-col *ngIf="this.radioValue === '5'">
+    <br>
+    <h5 class="description2">COMENTARIOS</h5>
+    <ion-label style="color:#ad182d">AGREGAR COMENTARIOS</ion-label>
+  </ion-col>
+
+</ion-row>
+<ion-row size="12" >
+
+        <ion-col size="6">
+
+        </ion-col>
+
+        <ion-col size="6" *ngIf="this.radioValue === '5'">
+          <ion-label>COMENTARIO</ion-label>
+          <ion-card>
+            <ion-textarea [(ngModel)]="data.comment" rows="6" cols="20" style="margin-top: 2px;"></ion-textarea>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+<!------------5--------------->
+
+
+
+  </ion-radio-group>
+  </ion-list>
+
     </ion-grid>
   </ion-content>
   <ion-footer no-border>

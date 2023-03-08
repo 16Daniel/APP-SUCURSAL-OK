@@ -9,6 +9,7 @@ import { AlertController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { interval } from 'rxjs';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { NativeAudio } from '@ionic-native/native-audio/ngx';
 
 @Component({
   selector: 'app-centro-control-matutino',
@@ -47,7 +48,8 @@ export class CentroControlMatutinoComponent implements OnInit {
     // public alertController: AlertController,
     public modalController: ModalController,
     public alertController: AlertController,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    private nativeAudio: NativeAudio
 
 
   ) { }
@@ -64,6 +66,8 @@ export class CentroControlMatutinoComponent implements OnInit {
     //this.notificationVoladoEfectivo();
     this.getDataControl(this.task);
     this.turnoActual();
+    this.nativeAudio.preloadSimple('uniqueId1', 'audio/1.mp3');
+  
 
  
 
@@ -266,7 +270,7 @@ export class CentroControlMatutinoComponent implements OnInit {
     this.time = `${date}T${timeTemp}`;
     console.log('format date', this.time);
     this.service.serviceGeneralGet(`CashRegisterShortage/GetCash?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`).subscribe(resp => {
-      if (resp.success) {
+      if (resp.message > 3000) {
         
         // si entra success el volado es mayor a 3000
         this.valueVolado = resp;
@@ -277,6 +281,7 @@ export class CentroControlMatutinoComponent implements OnInit {
         //SE DETINE EL TIMER DE ACTUALIZADO DE VOLADO
         this.stopTimer();
         this.alertVolado();
+        console.log('succes 3000 ', resp)
         
       }
       else {
@@ -330,7 +335,7 @@ export class CentroControlMatutinoComponent implements OnInit {
   async alertVolado(){
     if (this.valueVolado.success === true) {
       const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
+        cssClass: 'custom-alert',
         header: 'Realiza el volado de efectivo',
         subHeader: `Por $ ${this.valueVolado.message} MXN`,
         message: 'Se activara un cronómetro para identificar en cuánto tiempo se hizo el volado de efectivo.',
@@ -338,10 +343,14 @@ export class CentroControlMatutinoComponent implements OnInit {
         buttons: ['OK']
       });
       await alert.present();
+      this.stopTimer();
+      //this.nativeAudio.play('uniqueId1');
+      //this.nativeAudio.loop('uniqueId1');
       const { role, } = await alert.onDidDismiss();
       console.log('onDidDismiss resolved with role', role);
       //SE INICIA TIMER DE VOLADO DE EFECTIO
       this.startTimer();
+      //this.nativeAudio.stop('uniqueId1');
     }
   }
 
@@ -377,7 +386,7 @@ export class CentroControlMatutinoComponent implements OnInit {
 
   showTermina() {
     this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'ADVERTENCIA',
       subHeader: 'TERMINA TURNO',
       message: '¿ESTAS SEGURO DE TERMINAR TURNO?',
@@ -405,7 +414,7 @@ export class CentroControlMatutinoComponent implements OnInit {
   
   showValidaTermina() {
     this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'TERMINAR TURNO',
       message: 'AL TERMINAR EL TURNO YA NO PODRAS INGRESAR NUEVAMENTE',
@@ -470,11 +479,25 @@ export class CentroControlMatutinoComponent implements OnInit {
   }
   mesas(id: number) {
     if(this.data[3].isComplete == false){
-      if (id === null) {
-        id = 0;
-      }
-      this.stopTimer();
-      this.router.navigateByUrl(`supervisor/mesa-espera/1/${id}`+'/'+this.ValUsuario);
+      if(this.data[3].percentage == 1){
+         if(this.today.getHours() > 13 && this.today.getHours() <= 15){
+
+         }
+         else{
+          if (id === null) {
+            id = 0;
+          }
+          this.stopTimer();
+          this.router.navigateByUrl(`supervisor/mesa-espera/1/${id}`+'/'+this.ValUsuario);
+         }
+        }
+        else{
+          if (id === null) {
+            id = 0;
+          }
+          this.stopTimer();
+          this.router.navigateByUrl(`supervisor/mesa-espera/1/${id}`+'/'+this.ValUsuario);
+        }
     }
   }
   remisiones(id) {
@@ -485,12 +508,13 @@ export class CentroControlMatutinoComponent implements OnInit {
     this.router.navigateByUrl('supervisor/remisiones/1/' + id);
   }
   productoRiesgo(id) {
-    console.log('id producto en riesgo', id);
-    if (id === null) {
-      id = 0;
+    if(this.data[1].isComplete == false){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl(`supervisor/producto-riesgo/1/${id}`+'/'+this.ValUsuario);
     }
-    this.stopTimer();
-    this.router.navigateByUrl('supervisor/producto-riesgo/1/' + id);
   }
   transferencias(id) {
   if (id === null) {

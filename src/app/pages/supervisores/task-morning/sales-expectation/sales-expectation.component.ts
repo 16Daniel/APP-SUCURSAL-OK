@@ -231,7 +231,7 @@ export class SalesExpectationComponent implements OnInit {
     
     if(this.contador[i] < 3){
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'DIFERENCIA DE STOCK',
       // subHeader: `De: ${nodo.diferencia}`,
       message: 'HAY UNA DIFERENCIA EN EL STOCK Y TU CONTEO: <BR><br>1.- CUENTA NUEVAMENTE TU STOCK <BR>2.-REVISA QUE TODAS TUS COMPRAS ESTEN CARGADAS EN EL SISTEMAS <BR>3.-REVISA QUE TUS MERMAS ESTEN CARGADAS CORRECTAMENTE',
@@ -265,7 +265,7 @@ export class SalesExpectationComponent implements OnInit {
 
   async presentAlert(i) {
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'INVENTARIO',
       message: 'SE REALIZO EL AJUSTE DE INVENTARIO CON EXITO. <BR>RECUERDA REINICIAR TU SISTEMA FRONTREST PARA QUE RECIBA EL AJUSTE.',

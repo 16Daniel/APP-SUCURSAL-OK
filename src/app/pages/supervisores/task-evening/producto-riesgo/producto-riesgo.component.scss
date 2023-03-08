@@ -21,6 +21,7 @@ ion-footer {
 .date-grey {
   font-weight: 500;
   color: grey;
+  font-size: 150%;
 }
 .return {
   color: #d0122d;
@@ -52,3 +53,53 @@ ion-footer {
   margin-bottom: 5px;
 }
 
+
+// estilos para toggle
+ion-toggle {
+  // color de fondo
+  --background: #ff6e6e;
+  --background-checked: #2dd454;
+  // color de circulito
+  --handle-background: #ad182d;
+  --handle-background-checked: rgb(4, 129, 0);
+  
+  zoom: 1.5;
+}
+
+ion-toggle[aria-checked="false"] {
+
+  // position: relative;
+  &::before {
+    position: absolute;
+    content: "";
+  }
+
+  &::after {
+    position: absolute;
+    //content: "NO";
+    color: #ad182d;
+    font-size: 10px;
+    // line-height: 32px;
+    left: 33px;
+    top: 12px;
+  }
+}
+
+ion-toggle[aria-checked="true"] {
+
+  // position: relative;
+  &::before {
+    position: absolute;
+    content: "";
+  }
+
+  &::after {
+    position: absolute;
+    //content: "SI";
+    font-size: 10px;
+    // line-height: 36px;
+    left: 17px;
+    top: 12px;
+    color: #fff;
+  }
+}

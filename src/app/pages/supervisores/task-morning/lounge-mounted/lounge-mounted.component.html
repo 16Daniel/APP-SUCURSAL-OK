@@ -360,9 +360,9 @@
         <ion-col size="6"></ion-col>
       </ion-row> -->
 
-<!------------------------------------------------PLANTILLA------------------------------------------------------------------>
 
-      <ion-row size="12" *ngIf="this.radioValue === '3'">
+
+      <!-- <ion-row size="12" *ngIf="this.radioValue === '3'">
         <ion-col ion-col size="6">
           <ion-label style="color:#ad182d">COCINEROS</ion-label>
         </ion-col>
@@ -417,13 +417,17 @@
       <ion-row size="12" *ngIf="this.radioValue === '3'">
         <ion-col size="6">
           <ion-row>
-            <ion-col size="3" *ngFor="let photo of data.photoToSetTables; index as position">
+            <ion-col size="3" *ngFor="let photo of data.photoToSetTables; index as position"> -->
+
               <!-- se mostara esta imagen si no tiene id  -->
-              <ion-img *ngIf="photo.id === 0 && photo.type === 5" src="{{ base64 }},{{ photo.photo }}"
+
+              <!-- <ion-img *ngIf="photo.id === 0 && photo.type === 5" src="{{ base64 }},{{ photo.photo }}"
                 (click)="showActionSheet(photo, position)">
-              </ion-img>
+              </ion-img> -->
+
               <!-- se mostrara esta imagen si esta guardada -->
-              <ion-img *ngIf="photo.id !== 0 && photo.type === 5" src="{{ url }}{{ photo.photo }}"
+
+              <!-- <ion-img *ngIf="photo.id !== 0 && photo.type === 5" src="{{ url }}{{ photo.photo }}"
                 (click)="deleteImgShowAction(photo.id)">
               </ion-img>
             </ion-col>
@@ -431,7 +435,9 @@
         </ion-col>
 
         <ion-col size="6"></ion-col>
-      </ion-row>
+      </ion-row> -->
+
+<!------------------------------------------------PLANTILLA------------------------------------------------------------------>
 
       <ion-row size="12">
         <ion-col size="12">

@@ -39,8 +39,12 @@
       </ion-row>
       
       <ion-row size="12">
-        <ion-col size="12" *ngIf="turno === '1'">
-          <h5 class="description">REGISTRA CUANTAS PERSONAS TENEMOS EN ESPERA EN ALGUN MOMENTO ENTRE 13:00 A 17:00 HORAS</h5>
+        <ion-col size="12" *ngIf="turno === '1' && carga === 1">
+          <h5 class="description">REGISTRA CUANTAS PERSONAS TENEMOS EN ESPERA EN ALGUN MOMENTO ENTRE 14:00 A 15:00 HORAS</h5>
+          &nbsp;
+        </ion-col>
+        <ion-col size="12" *ngIf="turno === '1' && carga === 2">
+          <h5 class="description">REGISTRA CUANTAS PERSONAS TENEMOS EN ESPERA EN ALGUN MOMENTO ENTRE 15:00 A 17:00 HORAS</h5>
           &nbsp;
         </ion-col>
         <ion-col size="12" *ngIf="turno === '2'">
@@ -138,7 +142,7 @@
         <ion-row size="12" class="footer">
           <ion-col size="3" offset="8">
              <ion-button
-             *ngIf="this.visibleGuardar === true"
+             *ngIf="this.visibleGuardar === true && carga != 0"
               (click)="save()" shape="round" color="danger" expand="full">
               GUARDAR
             </ion-button>

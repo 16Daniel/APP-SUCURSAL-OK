@@ -188,7 +188,7 @@ export class LoungeMountedComponent implements OnInit {
   async alertCampos(){
 
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'CAMPOS',
       message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',

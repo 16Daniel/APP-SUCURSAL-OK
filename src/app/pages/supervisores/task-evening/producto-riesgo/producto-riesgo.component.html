@@ -2,14 +2,19 @@
   <!-- **********************data*******************  -->
   <ion-header *ngIf="activeData === true" class="ion-no-border ion-padding">
     <ion-grid>
-      <ion-row>
-        <ion-col>
+      <ion-row size="12">
+        <ion-col size="3">
           <div>
-            <p (click)="return()" class="ion-align-items-start return">
-              < REGRESAR </p>
+            <!-- <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR</p> -->
+              <ion-button *ngIf="this.visibleGuardar === true" (click)="return()" shape="round" color="warning" expand="full" size="small">
+                REGRESAR
+              </ion-button>
           </div>
         </ion-col>
+        <ion-col size="9"></ion-col>
       </ion-row>
+      <br>
       <ion-row size="12">
         <ion-col size="1">
           <img src="./assets/icon/ilustracion_producto_en_riesgo.png" alt="Alarma" />
@@ -20,21 +25,21 @@
       </ion-row>
       <!-- titulo de empresa -->
       <ion-row size="12">
-        <ion-col size="4">
-          <h5 class="subtitle-negro">SUCURSAL {{user.branchName}}</h5>
+        <ion-col size="9">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
         </ion-col>
-        <ion-col size="4">
+        <ion-col size="3">
           <span class="date-grey">
-            {{ today | date: "dd MMM yyy" }}
+            {{ today | date: "dd/MM/yyy" }}
           </span>
         </ion-col>
-        <ion-col size="4" class="ion-align-items-end">
+        <!-- <ion-col size="4" class="ion-align-items-end">
           <div class="align-end-text">
             <ion-button (click)="addProductRisk()" shape="round" color="warning" expand="full">
               AGREGAR PRODUCTO
             </ion-button>
           </div>
-        </ion-col>
+        </ion-col> -->
       </ion-row>
     </ion-grid>
   </ion-header>
@@ -51,22 +56,37 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row size="12">
+
+        <ion-row ion-row size="12">
+          <ion-col size="6"><span>¿CUENTAS CON PRODUCTO EN RIESGO?</span>
+            <br>
+            <ion-toggle [(ngModel)]="this.riesgo" (ionChange)="myChange($event)"></ion-toggle>
+          </ion-col>
+        </ion-row>
+
+        <ion-row size="12" *ngIf="this.riesgo === true">
           <ion-col size="6">
             <ion-row size="12">
               <!-- buscar producto cuando no hay id de registro -->
               <ion-col size="12">
-                <ion-label floating>Selecciona el producto en riesgo nuevo</ion-label>
+                <ion-label floating>SELECCIONE EL PRODUCTO EN RIESGO</ion-label>
                 <ion-card class="closed">
                   <ion-list>
                     <ion-list-header>
                       <ion-searchbar placeholder="Buscar" [(ngModel)]="item.search"></ion-searchbar>
                     </ion-list-header>
                     <ion-item>
-                      <ion-label>Producto </ion-label>
-                      <ion-select placeholder="Selecciona un producto" (click)="getCatalog(item.search)"
-                        [(ngModel)]="item.productId">
+                      <ion-label>PRODUCTO </ion-label>
+                      <!-- <ion-select placeholder="Selecciona un producto" (click)="getCatalog(item.search)"
+                        [(ngModel)]="item.productId" 
+                        (ionChange)="getItem()">
                         <ion-select-option *ngFor="let data of selectCatalogs" [value]="data.codarticulo">
+                          {{ data.descripcion }}
+                        </ion-select-option>
+                      </ion-select> -->
+                      <ion-select placeholder="Selecciona un producto" (click)="getCatalog(item.search)"
+                        [(ngModel)]="this.descProduct">
+                        <ion-select-option *ngFor="let data of selectCatalogs" [value]="data.descripcion">
                           {{ data.descripcion }}
                         </ion-select-option>
                       </ion-select>
@@ -75,20 +95,29 @@
                 </ion-card>
               </ion-col>
 
-              <ion-col size="12">
+              <!-- <ion-col size="12">
                 <ion-label floating>Código del paquete</ion-label>
                 <ion-card class="closed">
                   <ion-input [(ngModel)]="item.code" type="text" placeholder="Codigo"></ion-input>
                 </ion-card>
-              </ion-col>
+              </ion-col> -->
             </ion-row>
           </ion-col>
           <ion-col size="6">
-            <ion-label>Comentarios</ion-label>
+            <ion-label>PRODUCTOS</ion-label>
             <ion-card>
-              <ion-textarea [(ngModel)]="item.comment" rows="6" cols="20"></ion-textarea>
+              <ion-textarea [(ngModel)]="data.comment" rows="6" cols="20"></ion-textarea>
             </ion-card>
           </ion-col>
+          <ion-col size="3"></ion-col>
+          <ion-col size="3">
+            <div>
+                <ion-button (click)="agregarLista(index)" shape="round" color="warning" expand="full" size="small">
+                  AGREGAR
+                </ion-button>
+            </div>
+          </ion-col>
+          <ion-col size="9"></ion-col>
         </ion-row>
         <br /><br />
       </ion-grid>
@@ -100,14 +129,14 @@
           <ion-col size="6">
             <ion-row size="12">
               <ion-col size="12">
-                <ion-label floating>Selecciona el producto en riesgo nuevo</ion-label>
+                <ion-label floating>SELECCIONA EL PRODUCTO EN RIESGO</ion-label>
                 <ion-card class="closed">
                   <ion-list>
                     <ion-list-header>
                       <ion-searchbar placeholder="Buscar" [(ngModel)]="item.product"></ion-searchbar>
                     </ion-list-header>
                     <ion-item>
-                      <ion-label>Producto </ion-label>
+                      <ion-label>PRODUCTO</ion-label>
                       <ion-select placeholder="Selecciona un producto" (click)="getCatalog(item.product)"
                         [(ngModel)]="item.productId">
                         <ion-select-option *ngFor="let data of selectCatalogs" [value]="data.codarticulo">
@@ -118,17 +147,17 @@
                   </ion-list>
                 </ion-card>
               </ion-col>
-
-              <ion-col size="12">
+              
+              <!-- <ion-col size="12">
                 <ion-label floating>Código del paquete</ion-label>
                 <ion-card class="closed">
                   <ion-input [(ngModel)]="item.code" type="text" placeholder="Codigo"></ion-input>
                 </ion-card>
-              </ion-col>
+              </ion-col> -->
             </ion-row>
           </ion-col>
           <ion-col size="6">
-            <ion-label>Comentarios</ion-label>
+            <ion-label>PRODUCTOS</ion-label>
             <ion-card>
               <ion-textarea [(ngModel)]="item.comment" rows="6" cols="20"></ion-textarea>
             </ion-card>
