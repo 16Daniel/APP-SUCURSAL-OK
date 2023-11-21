@@ -10,14 +10,13 @@ import { AlertController } from '@ionic/angular';
 import { DatePipe, formatNumber } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
-@Component({
-  selector: 'app-sales-expectation',
-  templateUrl: './sales-expectation.component.html',
-  styleUrls: ['./sales-expectation.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 
+@Component({
+  selector: 'app-inventario-semanal',
+  templateUrl: './inventario-semanal.component.html',
+  styleUrls: ['./inventario-semanal.component.scss'],
 })
-export class SalesExpectationComponent implements OnInit {
+export class InventarioSemanalComponent implements OnInit {
 
   public today = new Date();
   public user: any;
@@ -32,6 +31,7 @@ export class SalesExpectationComponent implements OnInit {
   public strikes: number[] = [];
   handlerRespMessage = '';
   handlerRespValor;
+  recarga = 0;
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -49,6 +49,9 @@ export class SalesExpectationComponent implements OnInit {
     this.turno = this.routerActive.snapshot.paramMap.get('turno');
     this.getData();
     console.log('user: ', this.user);
+    console.log('ionview ');
+    
+    
     
   }
   ngOnInit() { }
@@ -66,27 +69,35 @@ export class SalesExpectationComponent implements OnInit {
   getData() {
     this.load.presentLoading('Cargando..');
     this.service
-      .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+      .serviceGeneralGet(`StockChicken/GetStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
         if (resp.success) {
           this.data = resp.result;
           this.data.forEach(element => {
             element.cantidad = 0;
           });
-          console.log(this.data);
+          console.log('data: ',this.data.length);
+          console.log('data: ',this.data);
         }
         console.log('s ',resp.success);
       });
     console.log('sin data');
+    
   }
 
   return() {
     // window.history.back();
     if (this.turno === '1') {
-      this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+      this.router.navigateByUrl('supervisor/control-matutino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
     }
     else {
-      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1');
+      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
     }
   }
 
@@ -122,7 +133,7 @@ export class SalesExpectationComponent implements OnInit {
   }
   save(item,i) {
     this.service
-      .serviceGeneralPostWithUrl(`StockChicken/AddRegularizate?codArticulo=${item.codarticulo}&codAlmacen=${item.codalmacen}&cantidad=${item.cantidad}&dataBase=${this.user.dataBase}`, ``)
+      .serviceGeneralPostWithUrl(`StockChicken/AddRegularizateV?codArticulo=${item.codarticulo}&codAlmacen=${item.codalmacen}&cantidad=${item.cantidad}&dataBase=${this.user.dataBase}`, ``)
       .subscribe((resp) => {
         console.log(resp);
 
@@ -150,13 +161,17 @@ export class SalesExpectationComponent implements OnInit {
     this.dataInv.updatedBy = this.user.id;
     this.dataInv.updatedDate = this.createDate;
     console.log('Obj To send  post=> ', this.dataInv);
+
+    this.load.present('Guardando..');
+    
+
     this.service
       .serviceGeneralPostWithUrl('Inventario', this.dataInv)
       .subscribe((data) => {
         if (data.success) {
-          this.load.presentLoading('Guardando..');
-          console.log('data inventario:', data);
           
+          console.log('data inventario:', data);
+          this.load.dismiss();
         }
       });
   }
@@ -188,7 +203,7 @@ export class SalesExpectationComponent implements OnInit {
     console.log('info de validar', stock);
     // this.load.presentLoading('Validando..');
     this.service
-      .serviceGeneralGet(`StockChicken/ValidateStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}&cantidad=${stock.cantidad}&codarticulo=${stock.codarticulo}`)
+      .serviceGeneralGet(`StockChicken/ValidateStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}&cantidad=${stock.cantidad}&codarticulo=${stock.codarticulo}`)
       .subscribe((resp) => {
         respValidar = resp;
         console.log('validar', respValidar);

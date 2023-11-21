@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ServiceGeneralService } from 'src/app/core/services/service-general/service-general.service';
@@ -9,6 +9,8 @@ import { LogoutComponent } from 'src/app/pages/popover/logout/logout.component';
 import { AlertController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { AudioService } from 'src/app/services/audio.service';
+import { getDate } from 'date-fns';
 
 
 @Component({
@@ -16,7 +18,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   templateUrl: './centro-control-vespertino.component.html',
   styleUrls: ['./centro-control-vespertino.component.scss'],
 })
-export class CentroControlVespertinoComponent implements OnInit {
+export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public user: any;
   public vespertino = 2;
   public data: any[] = [];
@@ -44,8 +46,9 @@ export class CentroControlVespertinoComponent implements OnInit {
   public contador = null;
   public tunoCorre = 0;
   public ValUsuario = 1;
-
+  public contador1 = null;
   public Inventario;
+  public SemInv = false;
 
   public barProgressTask: number;
   public barProgressTask1: number;
@@ -59,7 +62,8 @@ export class CentroControlVespertinoComponent implements OnInit {
     public popoverCtrl: PopoverController,
     public alertController: AlertController,
     public routerActive: ActivatedRoute,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    private audio: AudioService
 
   ) { }
 
@@ -75,7 +79,22 @@ export class CentroControlVespertinoComponent implements OnInit {
     this.getDataControl(this.task);
     // this.notificationAlarm();
     this.getInventario();
+    this.audio.preload('alerta', 'assets/audio/1.mp3');
     
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+    if(ampm == "PM" && Hrs >= 22){
+      this.SemInv = true;
+    }
+    else{
+      if(Hrs <= 3){
+        this.SemInv = true;
+      }
+      else{
+        this.SemInv = false;
+      }
+      
+    }
 
 
   }
@@ -89,9 +108,28 @@ export class CentroControlVespertinoComponent implements OnInit {
     //this.notificationVoladoEfectivo();
     //this.getDataControl(this.task);
     //this.notificationAlarm();
+    console.log('hora', this.today.getHours());
     this.startTimer();
 
+    // if(this.today.getDay() === 0 || this.today.getDay() === 1 ){
+    //   if(this.today.getDay() === 1 && this.today.getHours() < 7){
+    //     this.SemInv = true;
+    //     console.log('hora', this.today.getHours());
+    //   }
+    //   else{
 
+    //     this.SemInv = false;
+    //     if(this.today.getDay() === 0 ){this.SemInv = true;}
+    //   }
+      
+    // }
+    // else{this.SemInv = false;}
+
+
+  }
+  ngOnDestroy() {
+    this.stopTimer();
+    this.stopaudioLoop();
   }
   getDataControl(task) {
     // this.load.presentLoading('Cargando..');
@@ -196,7 +234,7 @@ export class CentroControlVespertinoComponent implements OnInit {
       if (time >= timeAlarmaIni && time <= timeAlarmaFin) {
         this.countAlarm += 1;
         const alert = await this.alertController.create({
-          cssClass: 'my-custom-class',
+          cssClass: 'custom-alert',
           header: 'Alerta',
           message: 'Recuerda activar la Alarma y subir la evidencia correspondiente',
           mode: 'ios', //sirve para tomar el diseño de ios
@@ -228,15 +266,18 @@ export class CentroControlVespertinoComponent implements OnInit {
     this.time = `${date}T${timeTemp}`;
     console.log('format date', this.time);
     this.service.serviceGeneralGet(`CashRegisterShortage/GetCash?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`).subscribe(resp => {
-      if (resp.success) {
+      if (resp.message > 3000) {
         // si entra success el volado es mayor a 3000
         this.valueVolado = resp;
         this.valueVolado.message = Number(this.valueVolado.message);
         this.valueVolado.time = this.time;
         console.log('valor', this.valueVolado);
         localStorage.setItem('valueVolado', JSON.stringify(this.valueVolado));
+        //SE DETINE EL TIMER DE ACTUALIZADO DE VOLADO
+        this.audioLoop();
         this.stopTimer();
         this.alertVolado();
+        console.log('succes 3000 ', resp)
       }
       else {
 
@@ -293,6 +334,7 @@ export class CentroControlVespertinoComponent implements OnInit {
       this.stopTimer();
       this.contador = setInterval((n) => { 
         this.notificationVoladoEfectivo();
+        this.tiempoCaptura();
         console.log('muestra timer'); }, 20000);
     }
     
@@ -300,6 +342,28 @@ export class CentroControlVespertinoComponent implements OnInit {
       
         clearInterval(this.contador);
       
+    }
+    audioLoop() {
+      this.stopaudioLoop();
+      this.contador1 = setInterval((n) => { 
+        this.audio.play('alerta');
+        console.log('reproduce timer'); }, 4000);
+    }
+    stopaudioLoop() {
+    
+      clearInterval(this.contador1);
+    
+    }
+
+    tiempoCaptura(){
+      const dia = new Date();
+      if(dia.getHours() > 19 && dia.getHours() < 21 && this.data[1].isComplete == false){
+       console.log('carga 1', dia.getHours());
+       this.stopTimer();
+       this.audioLoop();
+       this.alertCaptura();
+      }
+  
     }
 
     turnoActual(){
@@ -310,30 +374,55 @@ export class CentroControlVespertinoComponent implements OnInit {
         console.log('Hora:', time);
         
          
-        if ( time > 6 && time < 17) {
+        if ( time > 19 && time < 21) {
           this.tunoCorre = 1;
           this.alertFinal();
         }
         
   
-        if (time > 16 && time <= 23) {
-            this.tunoCorre = 2;
-            
-          }
-          if(time >= 0 && time < 3) {
-            this.tunoCorre = 2;
-            
-          }
-        if(this.tunoCorre == 0){
-          this.alertFinal();
-        }
+    }
+
+    async alertCaptura(){
+    
+      const alert = await this.alertController.create({
+        cssClass: 'custom-alert',
+        header: 'IMPORTANTE',
+        subHeader: 'CAPTURA',
+        message: 'CAPTURA MESAS EN ESPERA',
+        mode: 'ios',
+        buttons: ['OK'],
+      });
+      
+      await alert.present();
+      const { role } = await alert.onDidDismiss();
+      console.log('onDidDismiss resolved with role', role);
+      
+      this.stopaudioLoop();
+      this.startTimer();
   
+    }
+
+    async alertCapturaValida(){
+    
+      const alert = await this.alertController.create({
+        cssClass: 'custom-alert',
+        header: 'IMPORTANTE',
+        subHeader: 'CAPTURA',
+        message: 'LA CAPTURA ES SOLO DE 8:00PM - 9:00PM',
+        mode: 'ios',
+        buttons: ['OK'],
+      });
+      
+      await alert.present();
+      const { role } = await alert.onDidDismiss();
+      console.log('onDidDismiss resolved with role', role);
+        
     }
   
     async alertFinal(){
       this.stopTimer();
       const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
+        cssClass: 'custom-alert',
         header: 'IMPORTANTE',
         subHeader: 'TURNO',
         message: 'SE TERMINO EL HORARIO DE CAPTURA DE TAREAS DEL TURNO VESPERTINO. <BR>TU TURNO FINALIZARA',
@@ -351,7 +440,7 @@ export class CentroControlVespertinoComponent implements OnInit {
   async alertVolado(){
     if (this.valueVolado.success === true) {
       const alert = await this.alertController.create({
-        cssClass: 'my-custom-class',
+        cssClass: 'custom-alert',
         header: 'Realiza el volado de efectivo',
         subHeader: `Por $ ${this.valueVolado.message} MXN`,
         message: 'Se activara un cronómetro para identificar en cuánto tiempo se hizo el volado de efectivo.',
@@ -361,6 +450,9 @@ export class CentroControlVespertinoComponent implements OnInit {
       await alert.present();
       const { role } = await alert.onDidDismiss();
       console.log('onDidDismiss resolved with role', role);
+      //SE INICIA TIMER DE VOLADO DE EFECTIO
+      this.startTimer();
+      this.stopaudioLoop();
       //this.startTimer();
     }
   }
@@ -369,7 +461,7 @@ export class CentroControlVespertinoComponent implements OnInit {
   // package = 0 es nuevo registos, si es != 0 es update
   const modal = await this.modalController.create({
     component: DialogNotificationComponent,
-    cssClass: 'my-custom-class',
+    cssClass: 'custom-alert',
     swipeToClose: true,
     componentProps: {
       id: this.user.branchId, //se envia el id de sucursal
@@ -386,7 +478,7 @@ export class CentroControlVespertinoComponent implements OnInit {
   async logout(e: any) {
   const popover = await this.popoverCtrl.create({
     component: LogoutComponent,
-    cssClass: 'my-custom-class',
+    cssClass: 'custom-alert',
     event: e,
     translucent: true,
     mode: 'ios', //sirve para tomar el diseño de ios
@@ -399,7 +491,7 @@ export class CentroControlVespertinoComponent implements OnInit {
 
 showTermina() {
   this.alertController.create({
-    cssClass: 'my-custom-class',
+    cssClass: 'custom-alert',
     header: 'ADVERTENCIA',
     subHeader: 'TERMINA TURNO',
     message: '¿ESTAS SEGURO DE TERMINAR TURNO?',
@@ -427,7 +519,7 @@ showTermina() {
 
 showValidaTermina() {
   this.alertController.create({
-    cssClass: 'my-custom-class',
+    cssClass: 'custom-alert',
     header: 'IMPORTANTE',
     subHeader: 'TERMINAR TURNO',
     message: 'AL TERMINAR EL TURNO YA NO PODRAS INGRESAR NUEVAMENTE',
@@ -455,7 +547,7 @@ showValidaTermina() {
 getInventario() {
   this.load.presentLoading('Cargando..');
   this.service
-    .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+    .serviceGeneralGet(`StockChicken/GetStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
     .subscribe((resp) => {
       if (resp.success) {
         this.Inventario = resp.result;
@@ -496,12 +588,13 @@ getNotification() {
     });
 }
 productoRiesgo(id) {
-  console.log('id producto en riesgo', id);
-  if (id === null) {
-    id = 0;
+  if(this.data[10].isComplete == false){
+    if (id === null) {
+      id = 0;
+    }
+    this.stopTimer();
+    this.router.navigateByUrl(`supervisor/producto-riesgo/2/${id}`+'/'+this.ValUsuario);
   }
-  this.stopTimer();
-  this.router.navigateByUrl('supervisor/producto-riesgo/2/' + id);
 }
 albaranes(id) {
   if (id === null) {
@@ -550,11 +643,13 @@ resguardoTableta(id) {
   this.router.navigateByUrl('supervisor/resguardo-tableta/' + id+'/'+this.ValUsuario);
 }
 alarma(id) {
-  if (id === null) {
-    id = 0;
+  if(this.data[9].isComplete == false){
+    if (id === null) {
+      id = 0;
+    }
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/alarma/' + id);
   }
-  this.stopTimer();
-  this.router.navigateByUrl('supervisor/alarma/' + id);
 }
 tabletAndAlarma(idTablet, idAlarma) {
   if(this.data[5].isComplete == false){
@@ -570,21 +665,52 @@ tabletAndAlarma(idTablet, idAlarma) {
   }
 }
 mesas(id: number) {
-  if(this.data[1].isComplete == false){
-    if (id === null) {
-      id = 0;
+  var time  = new Date().getHours();
+  if(time > 19 && time < 21){
+    if(this.data[1].isComplete == false){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl(`supervisor/mesa-espera/2/${id}`+'/'+this.ValUsuario);
     }
-    this.stopTimer();
-    this.router.navigateByUrl(`supervisor/mesa-espera/2/${id}`+'/'+this.ValUsuario);
+  }
+  else{
+    this.alertCapturaValida();
   }
 }
+
+
+
+banosMatutino(id: number, tp: number) {
+  if(tp == 1){
+    if(this.data[8].isComplete == false){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl('supervisor/banos-matutino/2/' + id+'/'+this.ValUsuario+'/'+ tp);
+    }
+  }
+  else{
+    if(this.data[9].isComplete == false){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl('supervisor/banos-matutino/2/' + id+'/'+this.ValUsuario+'/'+ tp);
+    }
+  }
+}
+
 stockPollo(id: number) {
   if(this.Inventario.length != 0){
     if (id === null) {
       id = 0;
     }
     this.stopTimer();
-    this.router.navigateByUrl('supervisor/expectativa-venta/' + id);
+    this.router.navigateByUrl('supervisor/inventario-semanal/2/' + id+'/'+this.ValUsuario);
+    
   }
 }
 

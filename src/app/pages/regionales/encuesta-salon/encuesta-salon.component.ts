@@ -29,7 +29,7 @@ export class EncuestaSalonComponent implements OnInit {
   public activeName = false;
   public activeEmail = false;
   public base64 = 'data:image/jpeg;base64';
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
 
   public visibleGuardar = true;
 

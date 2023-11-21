@@ -19,6 +19,7 @@ import { GasValidationComponent } from './task-morning/gas-validation/gas-valida
 import { LoungeMountedComponent } from './task-morning/lounge-mounted/lounge-mounted.component';
 import { BanosMatutinoComponent } from './task-morning/Banos-Matutino/Banos-Matutino.component';
 import { SalesExpectationComponent } from './task-morning/sales-expectation/sales-expectation.component';
+import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
 import { DialoAddCommentAttendanceComponent } from './dialog/dialo-add-comment-attendance/dialo-add-comment-attendance.component';
 import { DialogAddPackageComponent } from './dialog/dialog-add-package/dialog-add-package.component';
 import { DialogAddRegisterUsePackageComponent } from './dialog/dialog-add-register-use-package/dialog-add-register-use-package.component';
@@ -51,6 +52,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     LoungeMountedComponent,
     BanosMatutinoComponent,
     SalesExpectationComponent,
+    InventarioSemanalComponent,
     DialoAddCommentAttendanceComponent,
     DialogAddPackageComponent,
     DialogAddRegisterUsePackageComponent,

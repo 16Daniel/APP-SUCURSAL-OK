@@ -25,7 +25,7 @@ export class AudioVideoSalonComponent implements OnInit {
   public disabled = false;
   public activeData = false;
   public base64 = 'data:image/jpeg;base64';
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public pick1 = 0;
   public pick2 = 0;
 

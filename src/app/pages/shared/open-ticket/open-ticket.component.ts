@@ -20,7 +20,7 @@ export class OpenTicketComponent implements OnInit {
   public activeData = false;
   public disabled = false;
   public today = new Date();
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
 
   constructor(public router: Router, public routerActive: ActivatedRoute,
     public service: ServiceGeneralService,

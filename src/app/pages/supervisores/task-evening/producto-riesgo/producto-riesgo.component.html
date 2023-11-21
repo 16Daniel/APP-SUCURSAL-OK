@@ -120,6 +120,24 @@
           </ion-col>
           <ion-col size="9"></ion-col>
         </ion-row>
+
+        <ion-row size="12" *ngIf="this.riesgo === false">
+          <ion-col size="12">
+            <ion-row size="12">
+              <!-- buscar producto cuando no hay id de registro -->
+              <ion-col size="4">
+                
+              </ion-col>
+              <ion-col size="4">
+                <h3 class="title">NO CUENTAS CON PRODUCTO EN RIESGO</h3>
+              </ion-col>
+              <ion-col size="4">
+               
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+
         <br /><br />
       </ion-grid>
     </div>

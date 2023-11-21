@@ -23,7 +23,7 @@ export class GasValidationComponent implements OnInit {
   public data: GasDataModel = new GasDataModel();
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public createDate = '';
   public radioValue = '1'; 
   public visibleGuardar = true;

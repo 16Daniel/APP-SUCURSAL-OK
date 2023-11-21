@@ -29,7 +29,10 @@ ion-footer {
   color: grey;
   font-size: 150%;
 }
-
+.money{
+  color: grey;
+  font-weight: bold;
+}
 .return {
   color: #d0122d;
 }
@@ -39,10 +42,30 @@ ion-footer {
   bottom: 10px;
   left: 0;
 }
-.center{
-  text-align: center;
+.color-text-white {
+  color: white;
 }
-.sizePhoto {
-  width: 5rem;
-  height: 5rem;
+.title-red {
+  color: #ad182d;
+}
+.title-tareas {
+  color: #1d1d1b;
+  font-weight: bold;
+  margin: 0px;
+}
+.title-progress-bar {
+  color: #808289;
+}
+.margin-completado {
+  text-align: end;
+  margin-top: -14px;
+}
+
+.align-end-text {
+  text-align: end;
+}
+ion-button[shape=circle] {
+  --border-radius: 50%;
+  width: 40px;
+  height: 40px;
 }

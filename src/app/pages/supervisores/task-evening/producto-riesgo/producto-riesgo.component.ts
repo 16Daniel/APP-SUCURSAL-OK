@@ -67,7 +67,7 @@ export class ProductoRiesgoComponent implements OnInit {
   }
   getData() {
     this.load.presentLoading('Cargando..');
-    this.service.serviceGeneralGet(`RiskProduct/${this.idProductoRiesgo}/Branch/`).subscribe((resp) => {
+    this.service.serviceGeneralGet(`RiskProduct/${this.user.id}/User/${this.turno}`).subscribe((resp) => {
       if (resp.success) {
         // si no hay registros en la sucursal
         if (resp.result?.length === 0) {
@@ -153,6 +153,51 @@ async alertRiesgo(){
   console.log('onDidDismiss resolved with role', role);
 
 }
+
+async confirmAlert() {
+  const alert = await this.alertController.create({
+    cssClass: 'custom-alert',
+    header: 'IMPORTANTE',
+    subHeader: 'CONFIRMACION',
+    message: 'CONFIRMAS QUE NO CUENTAS CON NINGUN PRODUCTO EN RIESGO',
+    mode: 'ios',
+    buttons: [
+      {
+        text: 'NO',
+        role: 'cancel',
+        handler: () => {
+          
+        },
+      },
+      {
+        text: 'SI',
+        role: 'confirm',
+        handler: () => {
+          this.deleteObjProduct(0);
+          this.objProduct.push({
+          id: 0,
+          branchId: this.user.branchId,
+          comment : 'SIN PRODUCTO EN RIESGO',
+          productId : 0,
+          code: '0',
+          createdBy : this.user.id,
+          createdDate: this.createDate,
+          updatedBy: this.user.id,
+          updatedDate: this.createDate,
+          search: '',
+          });
+          
+          console.log('cond 1', this.objProduct);
+          this.addProductoRiesgo();
+        },
+      },
+    ],
+  });
+
+  await alert.present();
+  const { role } = await alert.onDidDismiss();
+  
+}
   formartDate() {
     // 2022-03-11T17:27:00
     console.log('date', this.today);
@@ -189,7 +234,7 @@ async alertRiesgo(){
     console.log('agregado ' , this.descProduct);
     }
     else{
-    this.data.comment += ', ' + this.descProduct;
+    this.data.comment += ', \n' + this.descProduct;
     console.log('agregado ' , this.descProduct);
     }
   }
@@ -234,22 +279,7 @@ async alertRiesgo(){
     // }
 
     if(this.riesgo == false){
-      this.deleteObjProduct(0);
-      this.objProduct.push({
-      id: 0,
-      branchId: this.user.branchId,
-      comment : 'SIN PRODUCTO EN RIESGO',
-      productId : 0,
-      code: '0',
-      createdBy : this.user.id,
-      createdDate: this.createDate,
-      updatedBy: this.user.id,
-      updatedDate: this.createDate,
-      search: '',
-      });
-      
-      console.log('cond 1', this.objProduct);
-      this.addProductoRiesgo();
+      this.confirmAlert();
     }
     else{
      if(this.data.comment === undefined){

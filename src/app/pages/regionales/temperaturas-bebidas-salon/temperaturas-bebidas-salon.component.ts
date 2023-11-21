@@ -41,7 +41,7 @@ export class TemperaturasBebidasSalonComponent implements OnInit {
   public fotosCleanRoom: any;
   public fotosCleanCubeta: any;
   public fotosCleanBooths: any;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   constructor(public router: Router,
     public routerActive: ActivatedRoute,
     public alertController: AlertController,

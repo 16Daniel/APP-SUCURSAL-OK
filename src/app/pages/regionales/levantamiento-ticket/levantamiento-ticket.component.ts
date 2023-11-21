@@ -30,7 +30,7 @@ export class LevantamientoTicketComponent implements OnInit {
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
   public fotosProducto: any;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public activeData = false;
   constructor(public router: Router,
     private camera: Camera,

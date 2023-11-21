@@ -20,7 +20,7 @@ export class WaitTablesComponent implements OnInit {
   public activeData = false;
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public turno;
   public createDate = '';
   public visibleGuardar = true;
@@ -92,9 +92,13 @@ export class WaitTablesComponent implements OnInit {
     console.log('carga 1', dia.getHours());
     this.carga = 1;
    }
-   if(dia.getHours() > 15 && dia.getHours() <= 17){
-    console.log('carga 2', dia.getHours());
-    this.carga = 2;
+  //  if(dia.getHours() > 15 && dia.getHours() <= 17){
+  //   console.log('carga 2', dia.getHours());
+  //   this.carga = 2;
+  //  }
+   if(dia.getHours() > 19 && dia.getHours() <= 21){
+    console.log('carga 3', dia.getHours());
+    this.carga = 3;
    }
   }
 

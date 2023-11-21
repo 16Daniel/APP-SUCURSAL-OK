@@ -26,7 +26,7 @@ export class BanosMantenimientoComponent implements OnInit {
   public disabled = false;
   public activeData = false;
   public base64 = 'data:image/jpeg;base64';
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
 
   public radioValue = '1'; 
   public pick1 = 0;

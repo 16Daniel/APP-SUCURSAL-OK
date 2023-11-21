@@ -8,7 +8,8 @@ import { LoadingController } from '@ionic/angular';
 })
 export class LoaderComponent implements OnInit {
   loading: any;
-  constructor(public loadingCrtl: LoadingController) {}
+  isLoading = false;
+  constructor(public loadingCrtl: LoadingController, public loadingController: LoadingController) {}
 
   ngOnInit() {}
   async presentLoading(message: string) {
@@ -20,7 +21,29 @@ export class LoaderComponent implements OnInit {
     return this.loading.present();
   }
 
-  presentDismiss() {
+  async presentDismiss() {
     return this.loading.dismiss();
   }
+
+
+  async present(message: string) {
+    this.isLoading = true;
+    return await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message,
+    }).then(a => {
+      a.present().then(() => {
+        //console.log('presented');
+        if (!this.isLoading) {
+          a.dismiss();
+        }
+      });
+    });
+  }
+
+  async dismiss() {
+    this.isLoading = false;
+    return await this.loadingController.dismiss();
+  }
+
 }

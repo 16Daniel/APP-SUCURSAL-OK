@@ -31,7 +31,7 @@ export class AttendanceValidationComponent implements OnInit {
   public dataId = false; //sirve para identificar si el get trae informacion y diferencia entre el post y put
 
   public base64 = 'data:image/jpeg;base64';
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public createDate = '';
 
   constructor(

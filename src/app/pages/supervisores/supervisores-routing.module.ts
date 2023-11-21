@@ -19,6 +19,7 @@ import { CentroControlVespertinoComponent } from './task-evening/centro-control-
 import { AttendanceValidationComponent } from './task-morning/attendance-validation/attendance-validation.component';
 import { WaitTablesComponent } from './task-morning/wait-tables/wait-tables.component';
 import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-alarma/resguardo-tablet-alarma.component';
+import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
 const routes: Routes = [
   {
     path: '',
@@ -45,12 +46,16 @@ const routes: Routes = [
     component: LoungeMountedComponent,
   },
   {
-    path: 'banos-matutino/:id/:us',
+    path: 'banos-matutino/:turno/:id/:us/:tp',
     component: BanosMatutinoComponent,
   },
   {
-    path: 'expectativa-venta/:id',
+    path: 'expectativa-venta/:turno/:id/:us',
     component: SalesExpectationComponent,
+  },
+  {
+    path: 'inventario-semanal/:turno/:id/:us',
+    component: InventarioSemanalComponent,
   },
   {
     path: 'mesa-espera/:turno/:id/:us',

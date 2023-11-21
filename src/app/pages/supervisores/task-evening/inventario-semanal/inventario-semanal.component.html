@@ -23,11 +23,11 @@
         
         <ion-col size="11" class="ion-align-self-center">
           
-          <h3 class="title">INVENTARIO MAT</h3>
+          <h3 class="title">INVENTARIO VESP</h3>
         </ion-col>
       </ion-row>
       <!-- titulo de empresa -->
-      <ion-row size="12" *ngIf="user" >
+      <ion-row size="12" *ngIf="user" id="dateInf">
         <ion-col size="9">
           <h5 class="subtitle-negro">{{user.branchName}}</h5>
         </ion-col>
@@ -53,7 +53,7 @@
         </ion-col>
       </ion-row>
       <br>
-      <div *ngIf="data !== []">
+      <div *ngIf="data !== []" id="datosInv">
         <ion-row size="12" class="my-3" *ngFor="let item of data;  let i=index;">
 
           <ion-col size="3" class="ion-align-self-center">

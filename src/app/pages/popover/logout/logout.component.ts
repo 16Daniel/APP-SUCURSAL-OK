@@ -19,6 +19,6 @@ export class LogoutComponent implements OnInit {
     this.popoverCtrl.dismiss();
     this.router.navigateByUrl('login');
     localStorage.removeItem('userData');
-
+    
   }
 }

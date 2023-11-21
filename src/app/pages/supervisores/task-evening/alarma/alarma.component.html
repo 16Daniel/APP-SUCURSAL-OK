@@ -1,22 +1,26 @@
 <ion-app>
   <ion-header class="ion-no-border ion-padding">
     <ion-grid>
-      <ion-row>
-        <ion-col>
+      <ion-row size="12">
+        <ion-col size="3">
           <div>
-            <p  (click)="return()" class="ion-align-items-start return">< REGRESAR</p>
+            <!-- <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR</p> -->
+              <ion-button *ngIf="this.visibleGuardar === true" (click)="return()" shape="round" color="warning" expand="full" size="small">
+                REGRESAR
+              </ion-button>
           </div>
         </ion-col>
+        <ion-col size="9"></ion-col>
       </ion-row>
+      <br>
+
       <ion-row size="12">
         <ion-col size="1">
-          <img
-            src="./assets/icon/ilustracion_alarma.png"
-            alt="Alarma"
-          />
+          <img src="./assets/icon/ilustracion_aceite.png" alt="Alarma" />
         </ion-col>
         <ion-col size="11" class="ion-align-self-center">
-          <h3 class="title">ALARMA</h3>
+          <h3 class="title">ACEITE</h3>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -24,19 +28,130 @@
   <ion-content fullscreen="false" class="ion-padding">
     <ion-grid>
       <!-- titulo de empresa -->
-      <ion-row size="12">
-        <ion-col size="4">
-          <h5 class="subtitle-negro">SUCURSAL {{nameBranch}}</h5>
+      <ion-row size="12" *ngIf="user" >
+        <ion-col size="9">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
         </ion-col>
-        <ion-col size="8">
+        <ion-col size="3">
           <span class="date-grey">
-            {{ today | date: "dd MMM yyy" }}
+            {{ today | date: "dd/MM/yyy" }}
           </span>
         </ion-col>
       </ion-row>
+
+      <ion-row size="12">
+        <ion-col size="12">
+          <h5 class="description">BITACORA DE ACEITE</h5>
+          &nbsp;
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid>
+
+      <ion-row size="12">
+
+        <ion-col size="4" class="ion-align-self-center">
+          <h5 class="description">FREIDORA 1</h5>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-list>
+            <ion-item>
+              <ion-select placeholder="SELECCIONA" [(ngModel)]="data.tipoF1">
+                <ion-select-option value="CAMBIO">CAMBIO</ion-select-option>
+                <ion-select-option value="RELLENADO">RELLENADO</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-card class="closed">
+            <ion-input [(ngModel)]="data.litrosF1" type="number" min="0" required placeholder="LITROS" >
+            </ion-input>
+          </ion-card>
+        </ion-col>
+
+      </ion-row>
+      <ion-row size="12">
+
+        <ion-col size="4" class="ion-align-self-center">
+          <h5 class="description">FREIDORA 2</h5>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-list>
+            <ion-item>
+              <ion-select placeholder="SELECCIONA" [(ngModel)]="data.tipoF2">
+                <ion-select-option value="CAMBIO">CAMBIO</ion-select-option>
+                <ion-select-option value="RELLENADO">RELLENADO</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-card class="closed">
+            <ion-input [(ngModel)]="data.litrosF2" type="number" min="0" required placeholder="LITROS" >
+            </ion-input>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row size="12">
+
+        <ion-col size="4" class="ion-align-self-center">
+          <h5 class="description">FREIDORA 3</h5>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-list>
+            <ion-item>
+              <ion-select placeholder="SELECCIONA" [(ngModel)]="data.tipoF3">
+                <ion-select-option value="CAMBIO">CAMBIO</ion-select-option>
+                <ion-select-option value="RELLENADO">RELLENADO</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-card class="closed">
+            <ion-input [(ngModel)]="data.litrosF3" type="number" min="0" required placeholder="LITROS" >
+            </ion-input>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row size="12">
+
+        <ion-col size="2" class="ion-align-self-center">
+
+        </ion-col>
+
+        <!-- <ion-col size="4" class="ion-align-self-center">
+          <ion-card class="closed">
+            <ion-input [(ngModel)]="data.colaborador"  required placeholder="COLABORADOR" >
+            </ion-input>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-card class="closed">
+            <ion-input [(ngModel)]="data.supervisor"  required placeholder="SUPERVISOR" >
+            </ion-input>
+          </ion-card>
+        </ion-col> -->
+
+        <ion-col size="2" class="ion-align-self-center">
+
+        </ion-col>
+      </ion-row>
+     
       <ion-row size="12">
         <ion-col size="6">
-          <ion-label>Fotografía</ion-label>
+          <ion-label>FOTOGRAFIAS</ion-label>
           <ion-card
             style="height: 9rem"
             class="center"
@@ -51,9 +166,9 @@
           </ion-card>
         </ion-col>
         <ion-col size="6">
-          <ion-label>Comentario</ion-label>
+          <ion-label>COMENTARIOS</ion-label>
           <ion-card>
-            <ion-textarea [(ngModel)]="data.comment" rows="6" cols="20"></ion-textarea>
+            <ion-textarea [(ngModel)]="data.comment" rows="6" cols="20" style="margin-top: 2px;"></ion-textarea>
           </ion-card>
         </ion-col>
       </ion-row>

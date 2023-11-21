@@ -25,7 +25,7 @@ export class ResguardoPropinaComponent implements OnInit {
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
   public fotosPropina;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public activeData = false;
   // ******variables de validacion ********
   public activeAmount = false;
@@ -205,7 +205,7 @@ export class ResguardoPropinaComponent implements OnInit {
   async alertCampos(){
 
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'CAMPOS',
       message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',

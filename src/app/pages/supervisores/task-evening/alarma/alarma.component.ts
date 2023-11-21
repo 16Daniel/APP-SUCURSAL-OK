@@ -8,6 +8,7 @@ import {
   PhotoService,
 } from 'src/app/core/services/services/photo.service';
 import { ActionSheetController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-alarma',
@@ -22,11 +23,12 @@ export class AlarmaComponent implements OnInit {
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
   public fotosAlarma;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   // nombre de sucursal
   public branchId;
   public nameBranch = '';
   public dataBranch: any[] = [];
+  public visibleGuardar = true;
 
   constructor(
     public router: Router,
@@ -35,6 +37,7 @@ export class AlarmaComponent implements OnInit {
     public service: ServiceGeneralService,
     public load: LoaderComponent,
     public actionSheetController: ActionSheetController,
+    public alertController: AlertController,
     public photoService: PhotoService
   ) { }
 
@@ -44,7 +47,6 @@ export class AlarmaComponent implements OnInit {
     this.idAlarma = this.routerActive.snapshot.paramMap.get('id');
     // get name de sucursal
     this.branchId = this.user.branchId;
-    this.getBranch();
     if (this.idAlarma === '0') {
       console.log('Completar la tarea');
     } else {
@@ -67,7 +69,7 @@ export class AlarmaComponent implements OnInit {
   }
   return() {
     // window.history.back();
-    this.router.navigateByUrl('supervisor/control-vespertino');
+    this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
   }
 
   // get  name sucursal
@@ -176,19 +178,49 @@ export class AlarmaComponent implements OnInit {
     await actionSheet.present();
   }
 
-  save() {
-    this.disabled = true;
-    this.fotosAlarma = [];
-    // esto se pone aqui por que aun no se estrae la data de un get
-    this.data.branchId = this.user.branchId;
-    this.data.updatedBy = this.user.id;
-    this.data.updatedDate = this.today;
-    console.log('Obj To send => ', this.data);
+  async alertCampos(){
 
-    if (this.idAlarma === '0') {
-      this.addData();
-    } else {
-      this.updateData();
+    const alert = await this.alertController.create({
+      cssClass: 'custom-alert',
+      header: 'IMPORTANTE',
+      subHeader: 'CAMPOS',
+      message: 'VALIDA QUE TODOS LOS CAMPOS ESTEN CARGADOS CORRECTAMENTE',
+      mode: 'ios',
+      buttons: ['OK'],
+    });
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+
+  }
+
+  save() {
+    // if(this.data.comment == undefined || this.data.colaborador == undefined || this.data.supervisor == undefined 
+    //   || this.data.litrosF1 == undefined || this.data.litrosF2 == undefined || this.data.litrosF3 == undefined 
+    //   || this.data.tipoF1 == undefined || this.data.tipoF2 == undefined || this.data.tipoF3 == undefined 
+    //   || this.data.photoAlarms.length == 0){
+    if(this.data.comment == undefined || this.data.litrosF1 == undefined || this.data.litrosF2 == undefined || this.data.litrosF3 == undefined 
+      || this.data.tipoF1 == undefined || this.data.tipoF2 == undefined || this.data.tipoF3 == undefined 
+      || this.data.photoAlarms.length == 0){
+
+      this.alertCampos();
+    }
+    else{
+      this.data.colaborador = "na";
+      this.data.supervisor = "na";
+      this.disabled = true;
+      this.fotosAlarma = [];
+      // esto se pone aqui por que aun no se estrae la data de un get
+      this.data.branchId = this.user.branchId;
+      this.data.updatedBy = this.user.id;
+      this.data.updatedDate = this.today;
+      console.log('Obj To send => ', this.data);
+  
+      if (this.idAlarma === '0') {
+        this.addData();
+      } else {
+        this.updateData();
+      }
     }
   }
   addData() {
@@ -202,7 +234,7 @@ export class AlarmaComponent implements OnInit {
           console.log('data', data);
           this.photoService.deleteAllPhoto(this.data);
           this.disabled = false;
-          this.router.navigateByUrl('supervisor/control-vespertino');
+          this.return();
         }
       });
   }
@@ -220,7 +252,7 @@ export class AlarmaComponent implements OnInit {
         console.log('data', data);
         this.photoService.deleteAllPhoto(this.data);
         this.disabled = false;
-        this.router.navigateByUrl('supervisor/control-vespertino');
+        this.return();
       }
     });
   }
@@ -234,6 +266,14 @@ class AlarmModel {
   updatedBy: number;
   updatedDate: Date;
   photoAlarms: PhotoAlarmModel[] = [];
+  tipoF1: string;
+  tipoF2: string;
+  tipoF3: string;
+  litrosF1: number;
+  litrosF2: number;
+  litrosF3: number;
+  colaborador: string;
+  supervisor: string;
 }
 class PhotoAlarmModel {
   id: number;

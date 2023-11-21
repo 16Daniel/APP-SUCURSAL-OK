@@ -85,10 +85,10 @@ body {
 }
 ion-alert.custom-alert {
   --backdrop-opacity: 1;
-  --width: 50%;
-  --height: 50%;
-  --max-width: 100%;
-  --max-height: 100%;
+  --width: 25%;
+  --height: 35%;
+  --max-width: 25%;
+  --max-height: 35%;
   .alert-title {
     color:brown;
   
@@ -102,8 +102,8 @@ ion-alert.custom-alert {
     padding-bottom: 10%;
   }
   .alert-message {
-    font-size: 25px;
-    padding-bottom: 22%;
+    font-size: 20px;
+    padding-bottom: 20%;
   }
   .alert-button .alert-button-inner {
     font-size: 25px;

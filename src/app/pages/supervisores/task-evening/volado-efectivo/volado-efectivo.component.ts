@@ -25,7 +25,7 @@ export class VoladoEfectivoComponent implements OnInit {
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
   public fotosEfectivo;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public turno;
   // ******variables de validacion ********
   public activeAmount = true;
@@ -214,6 +214,9 @@ export class VoladoEfectivoComponent implements OnInit {
     await actionSheet.present();
   }
   validateSave() {
+    if(this.data.amount >= 3000){
+      this.data.comment = "SE VOLO LA CANTIDAD RECOMENDADA";
+    }
     if (
       this.data.amount === 0 ||
       this.data.amount === undefined ||
@@ -262,11 +265,11 @@ export class VoladoEfectivoComponent implements OnInit {
     // esto se pone aqui por que aun no se estrae la data de un get
     this.data.branchId = this.user.branchId;
     this.formartDate();
-    // if (this.idEfectivo === '0') {
-    //   this.addData();
-    // } else {
-    //   this.updateData();
-    // }
+    if (this.idEfectivo === '0') {
+      this.addData();
+    } else {
+      this.updateData();
+    }
   }
   formartDate() {
     // 2022-03-11T17:27:00
@@ -302,6 +305,7 @@ export class VoladoEfectivoComponent implements OnInit {
     this.data.createdDate = this.createDate;
     this.data.alarmTime = this.voladoEfectivo.time;
     this.data.elapsedAlarmTime = '';
+    console.log('comentario', this.data.comment);
     console.log('Obj a guardar =>', this.data);
     this.service
       .serviceGeneralPostWithUrl('CashRegisterShortage', this.data)

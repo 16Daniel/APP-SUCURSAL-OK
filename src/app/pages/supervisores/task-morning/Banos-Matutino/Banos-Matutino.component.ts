@@ -27,7 +27,7 @@ export class BanosMatutinoComponent implements OnInit {
   public base64 = 'data:image/jpeg;base64';
   public disabled = false;
   public fotosBanos;
-  public url = 'http://operamx.mooo.com/back/api_rebel_wings/';
+  public url = 'http://opera.no-ip.net/back/api_rebel_wings/';
   public activeData = false;
   public createDate = '';
 
@@ -39,6 +39,8 @@ export class BanosMatutinoComponent implements OnInit {
   public pick4 = 0;
   public visibleGuardar = true;
   public Ractivo = false;
+  public Tipo;
+  public turno;
 
   public valUsuario = 0;
 
@@ -57,7 +59,10 @@ export class BanosMatutinoComponent implements OnInit {
   ionViewWillEnter() {
     this.user = JSON.parse(localStorage.getItem('userData'));
     console.log("suc ",this.routerActive.snapshot.paramMap.get('id'));
+    console.log("tipo ",this.routerActive.snapshot.paramMap.get('tp'));
+    this.Tipo = this.routerActive.snapshot.paramMap.get('tp');
     this.branchId = this.routerActive.snapshot.paramMap.get('id');
+    this.turno = this.routerActive.snapshot.paramMap.get('turno');
 
       console.log('Actualizar la tarea', this.user.branchId);
       this.getData();
@@ -74,7 +79,12 @@ export class BanosMatutinoComponent implements OnInit {
   }
   return() {
     // window.history.back();
-    this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+    if (this.turno === '1') {
+      this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+    }
+    else {
+      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1');
+    }
   }
   // getData() {
   //   this.load.presentLoading('Cargando..');
@@ -94,7 +104,7 @@ export class BanosMatutinoComponent implements OnInit {
   getData() {
     this.load.presentLoading('Cargando..');
     this.service
-      .serviceGeneralGet('BanosMatutino/' + this.user.branchId+'/'+this.user.id)
+      .serviceGeneralGet('BanosMatutino/' + this.user.branchId+'/'+this.user.id+'/'+this.Tipo+'/'+this.turno)
       .subscribe((resp) => {
         if (resp.success) {
           if (resp.result?.length !== 0 && resp.result !== null) {
@@ -263,10 +273,12 @@ export class BanosMatutinoComponent implements OnInit {
     console.log('createDate', this.createDate);
     this.data.updatedBy = this.valUsuario,
     this.data.updatedDate = this.createDate;
-    if (this.branchId === '0') {
+    if (this.data.id === 0) {
       this.addBanos();
+      console.log('AGREGA');
     } else {
       this.updateBanos();
+      console.log('ACTUALIZA');
     }
   }
 
@@ -296,6 +308,9 @@ export class BanosMatutinoComponent implements OnInit {
       this.visibleGuardar = false;
       this.disabled = true;
       this.fotosBanos = [];
+      
+      this.data.tipo = this.Tipo;
+
       if (this.data.photoBanosMatutinos.length !== 0) {
         this.data.photoBanosMatutinos.forEach((photo) => {
           if (photo.id !== 0) {
@@ -357,6 +372,7 @@ class BanosDataModel {
   updatedBy: number;
   updatedDate: string;
   photoBanosMatutinos: PhotoTableModel[] = [];
+  tipo: number;
 }
 class PhotoTableModel {
   id: number;
