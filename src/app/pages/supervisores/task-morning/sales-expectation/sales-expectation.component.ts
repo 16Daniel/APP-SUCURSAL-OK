@@ -154,9 +154,13 @@ export class SalesExpectationComponent implements OnInit {
       .serviceGeneralPostWithUrl('Inventario', this.dataInv)
       .subscribe((data) => {
         if (data.success) {
-          this.load.presentLoading('Guardando..');
-          console.log('data inventario:', data);
           
+          console.log('data inventario:', data);
+          this.load.dismiss();
+        }
+        else{
+          this.load.dismiss();
+          location.reload();
         }
       });
   }

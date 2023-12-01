@@ -142,10 +142,13 @@ export class InventarioSemanalComponent implements OnInit {
           this.load.presentLoading('Cantidad Permitida');
           this.presentAlert(i);
           // this.data.status = 'post';
+          this.addInv(item,i);
+        }
+        else{
+          location.reload();
         }
       });
-    console.log('sin data');
-    this.addInv(item,i);
+    
   }
 
   addInv(item,i) {
@@ -173,7 +176,12 @@ export class InventarioSemanalComponent implements OnInit {
           console.log('data inventario:', data);
           this.load.dismiss();
         }
+        else{
+          this.load.dismiss();
+          location.reload();
+        }
       });
+      
   }
 
   formartDate() {
