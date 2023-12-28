@@ -133,6 +133,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   }
   getDataControl(task) {
     // this.load.presentLoading('Cargando..');
+    if(task != 3){
     this.service
       .serviceGeneralGet(`ControlCenter/${this.user.branchId}/${this.vespertino}/${task}/${this.user.id}/Manager`)
       .subscribe((resp) => {
@@ -183,6 +184,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
         }
         
       });
+    }
   }
 
   showUsuario(){
@@ -712,6 +714,13 @@ stockPollo(id: number) {
     this.router.navigateByUrl('supervisor/inventario-semanal/2/' + id+'/'+this.ValUsuario);
     
   }
+}
+
+graficaTiempos() {
+    
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/grafica-tiempos/2/'+this.ValUsuario);
+    
 }
 
 }

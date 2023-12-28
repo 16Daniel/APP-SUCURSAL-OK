@@ -91,12 +91,14 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.startTimer();
    
   }
+  
   ngOnDestroy() {
     this.stopTimer();
     this.stopaudioLoop();
   }
   getDataControl(task) {
-    this.load.presentLoading('Cargando..');
+    // this.load.presentLoading('Cargando..');
+    if(task != 3){
     this.service
       .serviceGeneralGet(`ControlCenter/${this.user.branchId}/${this.matutino}/${task}/${this.user.id}/Manager`)
       .subscribe((resp) => {
@@ -124,6 +126,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
         console.log('cant', this.cant);
         
       });
+    }
   }
 
   //FUNCIONES DEL TIMER DE VOLADO DE EFECTIVO
@@ -648,6 +651,12 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       this.stopTimer();
       this.router.navigateByUrl('supervisor/expectativa-venta/1/' + id+'/'+this.ValUsuario);
     }
+  }
+  graficaTiempos() {
+    
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/grafica-tiempos/1/'+this.ValUsuario);
+    
   }
 }
 

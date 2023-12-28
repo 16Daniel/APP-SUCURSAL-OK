@@ -35,12 +35,13 @@ import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DialogNotificationAlarmComponent } from './dialog/dialog-notification-alarm/dialog-notification-alarm.component';
 import { DialogUpdateStockPolloComponent } from './dialog/dialog-update-stock-pollo/dialog-update-stock-pollo.component';
-
+import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     ResguardoTabletAlarmaComponent,
     DialogNotificationAlarmComponent,
     DialogUpdateStockPolloComponent,
+    GraficaTiemposComponent,
   ],
   imports: [
     CommonModule,
@@ -88,7 +90,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
       useFactory: adapterFactory,
     }),
   ],
-  providers: [DatePicker],
+  providers: [DatePicker,NgxChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SupervisoresModule {}

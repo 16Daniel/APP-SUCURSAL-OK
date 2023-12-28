@@ -88,21 +88,25 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row size="12">
-
+        
           <!-- ----------- M E N U  S E C C I O N A D O-------------->
           <ion-col size="12">
             <ion-segment mode="ios" scrollable [(ngModel)]="task">
               <ion-row size="12">
-                <ion-col size="6">
+                <ion-col size="4">
                   <ion-segment-button value="1" (click)="getDataControl(1)">
                     <span class="btnMenu">TAREAS</span>
                   </ion-segment-button>
                 </ion-col>
-                <ion-col size="6">
-                  <!-- <ion-segment-button value="2" (click)="getDataControl(2)">
+                <!-- <ion-col size="4">
+                  <ion-segment-button value="2" (click)="getDataControl(2)">
                     <span class="btnMenu">OTROS</span>
-                  </ion-segment-button> -->
+                  </ion-segment-button>
+                </ion-col> -->
+                <ion-col size="4">
+                  <ion-segment-button value="3" (click)="getDataControl(3)">
+                    <span class="btnMenu">REPORTES</span>
+                  </ion-segment-button>
                 </ion-col>
                 
               </ion-row>
@@ -637,7 +641,7 @@
               </ion-row>
             </ion-card-content>
           </ion-card>
-        </ion-col>
+          </ion-col>
 
           <!------RESGUARDO DE TABLETA Y ALARMA-------->
           <ion-col size="6" *ngIf="tabletAlarmaActive === true">
@@ -728,7 +732,104 @@
             </ion-card>
           </ion-col>
 
+          
+        </ion-row>
 
+        <ion-row size="12" *ngSwitchCase="'3'">
+          <!--***** S E C C I O N   R E P O R T E S ******-->
+          
+          <!-------------- GRAFICA TIEMPOS ------------>
+          <!-- *ngIf="data[3]" -->
+          <ion-col size="6">
+            <!-- aqui se envia el id de sucursal -->
+            <!-- data[8].id -->
+            <ion-card (click)="graficaTiempos()">
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <!-- <img *ngIf="this.cant === true" src="./assets/icon/ilustracion_volado_de_efectivo.png" alt="" />
+                    <img *ngIf="this.cant === false" src="./assets/icon/ilustracion_check.png" alt=""/> -->
+                    <img src="./assets/icon/ilustracion_mesas_en_espera.png" alt=""/> 
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div class="valueVolado">
+                          <!-- <h3 class="title-tareas">VOLADO: {{ valueVolado.message | currency}}</h3> -->
+                          <h3 class="title-tareas">TIEMPOS</h3>
+                        </div>
+                      </ion-col>
+                      <ion-col size="12">
+                        <div>
+                          <span>
+                            GRAFICA
+                          </span>
+                        </div>
+                        
+                      </ion-col>
+                      <ion-col size="12">
+                        <span class="title-progress-bar"></span>
+                        <br>
+                        <ion-progress-bar color="medium" [value]="0"></ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span class="title-progress-bar">
+                            
+                          </span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <!-- ----------- PROXIMAMENTE ---------------->
+          <ion-col  size="6">
+            <!-- <ion-card (click)="validacionAsistencia()"> -->
+              <ion-card>
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <img *ngIf="data[0].isComplete === false" src="./assets/icon/proximamente.png" alt="" />
+                    <!-- <img *ngIf="data[0].isComplete === false" src="./assets/icon/ilustracion_asistencias_inc.png" alt="" /> -->
+                    <img *ngIf="data[0].isComplete === true" src="./assets/icon/proximamente.png" alt=""/>
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div>
+                          <h3 class="title-tareas-inact">
+                            PROXIMAMENTE
+                          </h3>
+                        </div>
+                      </ion-col>
+                      <ion-col size="12">
+                        <div>
+                          <span>
+                            PROXIMAMENTE
+                          </span>
+                        </div>
+                        
+                      </ion-col>
+                      <ion-col size="12">
+                        <span class="title-progress-bar"></span>
+                        <br>
+                        <ion-progress-bar color="medium" [value]="0"></ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span class="title-progress-bar">
+                            
+                          </span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>      
+          
         </ion-row>
       
 
@@ -888,7 +989,8 @@
 
          </ion-row>
         </div>
-      </ion-row>
+        
+     
 
       </ion-grid>
     </div>

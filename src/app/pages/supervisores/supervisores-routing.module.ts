@@ -20,6 +20,7 @@ import { AttendanceValidationComponent } from './task-morning/attendance-validat
 import { WaitTablesComponent } from './task-morning/wait-tables/wait-tables.component';
 import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-alarma/resguardo-tablet-alarma.component';
 import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
+import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
 const routes: Routes = [
   {
     path: '',
@@ -100,6 +101,10 @@ const routes: Routes = [
   {
     path: 'resguardo-tableta/:idTablet/alarma/:idAlarma/:us',
     component: ResguardoTabletAlarmaComponent,
+  },
+  {
+    path: 'grafica-tiempos/:turno/:us',
+    component: GraficaTiemposComponent,
   }
 ];
 @NgModule({
