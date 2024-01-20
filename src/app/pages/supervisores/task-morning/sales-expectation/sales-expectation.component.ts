@@ -32,6 +32,7 @@ export class SalesExpectationComponent implements OnInit {
   public strikes: number[] = [];
   handlerRespMessage = '';
   handlerRespValor;
+  filtro: string = '';
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -293,6 +294,21 @@ export class SalesExpectationComponent implements OnInit {
       this.ngOnInit();
   }
   
+  filtrarDatos() {
+    if(this.filtro == '')
+    {
+      return this.data
+    } else
+    {
+      return this.data.filter(item => item.descripcion.toUpperCase().includes(this.filtro.toUpperCase()));
+    } 
+  }
+
+  limpiarfiltro()
+  {
+    this.filtro = '';
+    this.filtrarDatos(); 
+  }
 
 }
 class InvModel {

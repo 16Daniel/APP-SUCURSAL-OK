@@ -98,6 +98,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   }
   getDataControl(task) {
     // this.load.presentLoading('Cargando..');
+    debugger
     if(task != 3){
     this.service
       .serviceGeneralGet(`ControlCenter/${this.user.branchId}/${this.matutino}/${task}/${this.user.id}/Manager`)
@@ -657,6 +658,12 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.router.navigateByUrl('supervisor/grafica-tiempos/1/'+this.ValUsuario);
     
+  }
+
+  grafica25PTS()
+  {
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/c25pts/1/'+this.ValUsuario);
   }
 }
 

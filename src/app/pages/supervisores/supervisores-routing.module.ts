@@ -21,6 +21,7 @@ import { WaitTablesComponent } from './task-morning/wait-tables/wait-tables.comp
 import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-alarma/resguardo-tablet-alarma.component';
 import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
 import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
+import { C25ptsComponent } from './graficas/c25pts/c25pts.component';
 const routes: Routes = [
   {
     path: '',
@@ -105,6 +106,10 @@ const routes: Routes = [
   {
     path: 'grafica-tiempos/:turno/:us',
     component: GraficaTiemposComponent,
+  },
+  {
+    path: 'c25pts/:turno/:us',
+    component: C25ptsComponent,
   }
 ];
 @NgModule({

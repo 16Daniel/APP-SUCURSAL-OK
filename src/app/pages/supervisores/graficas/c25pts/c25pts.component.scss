@@ -1,12 +1,29 @@
-ion-content {
-  --ion-background-color: #fafafa;
+.tabcol {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  background-color: #eee;
 }
-ion-header {
-  background-color: #fafafa;
+
+.tabcol2 {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  font-weight: normal;
 }
-ion-footer {
-  background-color: #fafafa;
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
 }
+
+.ct
+{
+  overflow-x: auto;
+}
+
 .title {
   color: #ad182d;
   font-weight: bold;
@@ -68,31 +85,4 @@ ion-button[shape=circle] {
   --border-radius: 50%;
   width: 40px;
   height: 40px;
-}
-
-.i-filter
-{
-  padding: 20px;
-  width: 100%;
-  background-color: #eee;
-  margin-bottom: 10px;
-  border-radius: 20px;
-  border: none;
-  font-size: large;
-}
-
-.btn-f
-{
-  font-size: medium;
-  padding: 20px; 
-  background-color: red;
-  border-radius: 20px;
-  color: white;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.btn-f:hover
-{
-
-  background-color: rgb(214, 0, 0);
 }

@@ -69,3 +69,27 @@ ion-button[shape=circle] {
   width: 40px;
   height: 40px;
 }
+
+.i-filter
+{
+  padding: 20px;
+  width: 100%;
+  background-color: #eee;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  border: none;
+  font-size: large;
+}
+
+.btn-f
+{
+  font-size: large;
+  padding: 20px; 
+  background-color: red;
+  border-radius: 20px;
+  color: white;
+}
+.btn-f:hover
+{
+  background-color: rgb(214, 0, 0);
+}

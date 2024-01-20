@@ -41,7 +41,16 @@
   </ion-header>
   <ion-content fullscreen="false" class="ion-padding">
     <ion-grid>
-
+       
+      <ion-row>
+        <ion-col size="12" class="ion-align-self-center">
+          <input [(ngModel)]="filtro" placeholder="Escribe para filtrar" class="i-filter">
+          <button (click)="limpiarfiltro()" *ngIf="this.filtro !='' " class="btn-f">
+            BORRAR FILTRO
+          </button>
+        </ion-col>  
+      </ion-row>
+     
       <ion-row size="12">
         <ion-col size="3" class="ion-align-self-center">
           <span>PRODUCTO:</span>
@@ -54,7 +63,7 @@
       </ion-row>
       <br>
       <div *ngIf="data !== []" id="datosInv">
-        <ion-row size="12" class="my-3" *ngFor="let item of data;  let i=index;">
+        <ion-row size="12" class="my-3" *ngFor="let item of filtrarDatos();  let i=index;">
 
           <ion-col size="3" class="ion-align-self-center">
             

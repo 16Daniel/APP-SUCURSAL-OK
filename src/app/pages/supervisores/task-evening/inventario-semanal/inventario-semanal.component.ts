@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Data } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { ServiceGeneralService } from 'src/app/core/services/service-general/service-general.service';
 import { DialogAddPackageComponent } from '../../dialog/dialog-add-package/dialog-add-package.component';
@@ -32,6 +32,7 @@ export class InventarioSemanalComponent implements OnInit {
   handlerRespMessage = '';
   handlerRespValor;
   recarga = 0;
+  filtro: string = '';
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -73,6 +74,12 @@ export class InventarioSemanalComponent implements OnInit {
       .subscribe((resp) => {
         if (resp.success) {
           this.data = resp.result;
+          debugger
+          // Función de comparación personalizada
+          const compararPorOrdenamiento = (a, b) => a.orden - b.orden;
+
+          // Aplicar la ordenación al array
+          this.data.sort(compararPorOrdenamiento);
           this.data.forEach(element => {
             element.cantidad = 0;
           });
@@ -312,6 +319,21 @@ export class InventarioSemanalComponent implements OnInit {
       this.ngOnInit();
   }
   
+  filtrarDatos() {
+    if(this.filtro == '')
+    {
+      return this.data
+    } else
+    {
+      return this.data.filter(item => item.descripcion.toUpperCase().includes(this.filtro.toUpperCase()));
+    } 
+  }
+
+  limpiarfiltro()
+  {
+    this.filtro = '';
+    this.filtrarDatos(); 
+  }
 
 }
 class InvModel {
