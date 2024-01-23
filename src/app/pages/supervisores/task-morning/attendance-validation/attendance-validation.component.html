@@ -1,223 +1,41 @@
 <ion-app>
   <!-- data -->
-  <ion-header class="ion-no-border ion-padding">
+  <ion-header *ngIf="activeData === true" class="ion-no-border ion-padding">
     <ion-grid>
-      <ion-row size="12">
-        <ion-col size="3">
-          
-            <!-- <p (click)="return()" class="ion-align-items-start return">
-              < REGRESAR</p> -->
-              <ion-button *ngIf="this.visibleGuardar === true" (click)="return()" shape="round" color="warning" expand="full" size="small">
-                REGRESAR
-              </ion-button>
-          
+      <ion-row>
+        <ion-col>
+          <div>
+            <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR </p>
+          </div>
         </ion-col>
-        <ion-col size="9"></ion-col>
       </ion-row>
-      <br>
       <ion-row size="12">
         <ion-col size="1">
-          <img
-            src="./assets/icon/ilustracion_asistencias.png"
-            alt="Validaccion de assistencia"
-          />
+          <img src="./assets/icon/ilustracion_asistencias.png" alt="Validaccion de assistencia" />
         </ion-col>
         <ion-col size="11" class="ion-align-self-center">
-          <h3 class="title">ASISTENCIAS</h3>
+          <h3 class="title">VALIDACIÓN DE ASISTENCIAS</h3>
+        </ion-col>
+      </ion-row>
+      <!-- titulo de empresa -->
+      <ion-row size="12">
+        <ion-col size="4">
+          <h5 class="subtitle-negro">SUCURSAL {{user.branchName}}</h5>
+        </ion-col>
+        <ion-col size="8">
+          <span class="date-grey">
+            {{ today | date: "dd MMM yyy" }}
+          </span>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-header>
   <ion-content *ngIf="activeData === true" fullscreen="false" class="ion-padding">
-    
     <ion-grid>
-      <!-- titulo de empresa -->
-      <ion-row size="12" *ngIf="user" >
-        <ion-col size="9">
-          <h5 class="subtitle-negro">{{user.branchName}}</h5>
-        </ion-col>
-        <ion-col size="3">
-          <span class="date-grey">
-            {{ today | date: "dd/MM/yyy" }}
-          </span>
-        </ion-col>
-      </ion-row>
 
-      <ion-row size="12">
-        <ion-col size="12">
-          <h5 class="description">REVISA TU PLANTILLA Y MEETING DEL DIA</h5>
-        </ion-col>
-      </ion-row>
-
-
-
-    <ion-row size="12">
-
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length === 3">
-        <ion-label>FOTOGRAFIA CAJERO</ion-label>
-        <ion-card
-          style="height: 9rem"
-          class="center"
-       
-        >
-          <div style="margin-top: 2rem">
-            <ion-icon
-              class="sizePhoto"
-              src="./assets/icon/icon_foto.svg"
-            ></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length !== 3">
-        <ion-label>FOTOGRAFIA CAJERO</ion-label>
-        <ion-card style="height: 9rem" class="center" (click)="addPhotoToGallery(1)">
-          <div style="margin-top: 2rem">
-            <ion-icon class="sizePhoto" src="./assets/icon/icon_foto.svg"></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length === 3">
-        <ion-label>FOTOGRAFIA VENDEDORES</ion-label>
-        <ion-card
-          style="height: 9rem"
-          class="center"
-       
-        >
-          <div style="margin-top: 2rem">
-            <ion-icon
-              class="sizePhoto"
-              src="./assets/icon/icon_foto.svg"
-            ></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length !== 3">
-        <ion-label>FOTOGRAFIA VENDEDORES</ion-label>
-        <ion-card style="height: 9rem" class="center" (click)="addPhotoToGallery(2)">
-          <div style="margin-top: 2rem">
-            <ion-icon class="sizePhoto" src="./assets/icon/icon_foto.svg"></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row size="12">
-      <ion-col size="6">
-        <!-- fotos sin id -->
-        <ion-row>
-          <ion-col size="6" *ngFor="let photo of data.photoValidateAttendances; index as position">
-            <!-- se mostara esta imagen si no tiene id  -->
-            <ion-img *ngIf="photo.id === 0 && photo.type === 1" src="{{ base64 }},{{ photo.photo }}" (click)="showActionSheet(photo, position)">
-            </ion-img>
-            <!-- se mostrara esta imagen si esta guardada -->
-            <ion-img *ngIf="photo.id !== 0 && photo.type === 1" src="{{ url }}{{ photo.photo }}" (click)="deleteImgShowAction(photo.id)"></ion-img>
-
-          </ion-col>
-        </ion-row>
-      </ion-col>
-      <ion-col size="6">
-        <!-- fotos sin id -->
-        <ion-row>
-          <ion-col size="6" *ngFor="let photo of data.photoValidateAttendances; index as position">
-            <!-- se mostara esta imagen si no tiene id  -->
-            <ion-img *ngIf="photo.id === 0 && photo.type === 2" src="{{ base64 }},{{ photo.photo }}" (click)="showActionSheet(photo, position)">
-            </ion-img>
-            <!-- se mostrara esta imagen si esta guardada -->
-            <ion-img *ngIf="photo.id !== 0 && photo.type === 2" src="{{ url }}{{ photo.photo }}" (click)="deleteImgShowAction(photo.id)"></ion-img>
-
-          </ion-col>
-        </ion-row>
-      </ion-col>
-    </ion-row>
-
-    <ion-row size="12">
-
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length === 3">
-        <ion-label>FOTOGRAFIA COCINEROS</ion-label>
-        <ion-card
-          style="height: 9rem"
-          class="center"
-       
-        >
-          <div style="margin-top: 2rem">
-            <ion-icon
-              class="sizePhoto"
-              src="./assets/icon/icon_foto.svg"
-            ></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length !== 3">
-        <ion-label>FOTOGRAFIA COCINEROS</ion-label>
-        <ion-card style="height: 9rem" class="center" (click)="addPhotoToGallery(3)">
-          <div style="margin-top: 2rem">
-            <ion-icon class="sizePhoto" src="./assets/icon/icon_foto.svg"></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length === 3">
-        <ion-label>FOTOGRAFIA MEETING Y BITACORA</ion-label>
-        <ion-card
-          style="height: 9rem"
-          class="center"
-       
-        >
-          <div style="margin-top: 2rem">
-            <ion-icon
-              class="sizePhoto"
-              src="./assets/icon/icon_foto.svg"
-            ></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6" *ngIf="this.data.photoValidateAttendances.length !== 3">
-        <ion-label>FOTOGRAFIA MEETING Y BITACORA</ion-label>
-        <ion-card style="height: 9rem" class="center" (click)="addPhotoToGallery(4)">
-          <div style="margin-top: 2rem">
-            <ion-icon class="sizePhoto" src="./assets/icon/icon_foto.svg"></ion-icon>
-          </div>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row size="12">
-      <ion-col size="6">
-        <!-- fotos sin id -->
-        <ion-row>
-          <ion-col size="6" *ngFor="let photo of data.photoValidateAttendances; index as position">
-            <!-- se mostara esta imagen si no tiene id  -->
-            <ion-img *ngIf="photo.id === 0 && photo.type === 3" src="{{ base64 }},{{ photo.photo }}" (click)="showActionSheet(photo, position)">
-            </ion-img>
-            <!-- se mostrara esta imagen si esta guardada -->
-            <ion-img *ngIf="photo.id !== 0 && photo.type === 3" src="{{ url }}{{ photo.photo }}" (click)="deleteImgShowAction(photo.id)"></ion-img>
-
-          </ion-col>
-        </ion-row>
-      </ion-col>
-      <ion-col size="6">
-        <!-- fotos sin id -->
-        <ion-row>
-          <ion-col size="6" *ngFor="let photo of data.photoValidateAttendances; index as position">
-            <!-- se mostara esta imagen si no tiene id  -->
-            <ion-img *ngIf="photo.id === 0 && photo.type === 4" src="{{ base64 }},{{ photo.photo }}" (click)="showActionSheet(photo, position)">
-            </ion-img>
-            <!-- se mostrara esta imagen si esta guardada -->
-            <ion-img *ngIf="photo.id !== 0 && photo.type === 4" src="{{ url }}{{ photo.photo }}" (click)="deleteImgShowAction(photo.id)"></ion-img>
-
-          </ion-col>
-        </ion-row>
-      </ion-col>
-    </ion-row>
-<!------------------------------------------------------------------------------------------------------------------------------------------------------->
-      <!-- <ion-card > -->
-        <!-- <ion-card *ngFor="let person of data"> -->
-        <!-- <ion-row size="12">
+      <ion-card *ngFor="let person of data">
+        <ion-row size="12">
           <ion-item-sliding id="item100">
             <ion-item>
               <ion-grid>
@@ -264,19 +82,19 @@
                     </div>
                   </ion-col>
                   <ion-col size="1" class="ion-align-self-center">
-                    <div> -->
-                      <!-- <img *ngIf="person.status === 1" src="./assets/icon/icon_asisti.png" alt="" /> -->
+                    <div>
+                      <img *ngIf="person.status === 1" src="./assets/icon/icon_asisti.png" alt="" />
                       <!-- no llego -->
-                      <!-- <img *ngIf="person.status === 2" src="./assets/icon/icon_falt.png" alt="" /> -->
+                      <img *ngIf="person.status === 2" src="./assets/icon/icon_falt.png" alt="" />
                       <!-- retardo -->
-                      <!-- <img *ngIf="person.status === 3" src="./assets/icon/icon_lleg_tarde.png" alt="" />
+                      <img *ngIf="person.status === 3" src="./assets/icon/icon_lleg_tarde.png" alt="" />
                     </div>
                   </ion-col>
                 </ion-row>
               </ion-grid>
-            </ion-item> -->
+            </ion-item>
             <!-- *ngIf="person.status === 3 || person.status === 1" -->
-            <!-- <ion-item-options side="end">
+            <ion-item-options side="end">
               <ion-item-option color="warning" (click)="
                     commentAttendance(
                       person.attendanceId,
@@ -287,31 +105,12 @@
                   ">
                 <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
               </ion-item-option>
-            </ion-item-options> -->
-          <!-- </ion-item-sliding> -->
-        <!-- </ion-row> -->
-      <!-- </ion-card> -->
-<!------------------------------------------------------------------------------------------------------------------------------------------------------->
-
-
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-row>
+      </ion-card>
     </ion-grid>
-
   </ion-content>
-  <ion-footer *ngIf="activeData === true" no-border>
-    <ion-grid>
-      <!-- footer boton -->
-      <ion-row size="12" class="footer">
-        <ion-col size="6"></ion-col>
-        <ion-col size="3" >
-        </ion-col>
-        <ion-col size="3" >
-          <ion-button (click)="save()" shape="round" color="danger" expand="full" *ngIf="this.visibleGuardar === true">
-            GUARDAR
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-footer>
   <!-- skeletor -->
   <ion-header *ngIf="activeData === false" class="ion-no-border ion-padding">
     <ion-grid class="animated flash slow">
