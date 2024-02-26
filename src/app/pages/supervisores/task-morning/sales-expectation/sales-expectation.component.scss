@@ -83,11 +83,13 @@ ion-button[shape=circle] {
 
 .btn-f
 {
-  font-size: large;
+  font-size: medium;
   padding: 20px; 
   background-color: red;
   border-radius: 20px;
   color: white;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .btn-f:hover
 {
