@@ -1,0 +1,140 @@
+<ion-app>
+  <ion-header class="ion-no-border ion-padding">
+    <ion-grid>
+
+      <ion-row size="12">
+        <ion-col size="3">
+          <div>
+            <!-- <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR</p> -->
+              <ion-button (click)="return()" shape="round" color="warning" expand="full" size="small">
+                REGRESAR
+              </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="9"></ion-col>
+      </ion-row>
+      <br>
+      
+      <ion-row size="12">
+        <ion-col size="1">
+          <!-- <img src="./assets/icon/ilustracion_stock_de_pollo.png" alt="Espectativa de venta" /> -->
+        </ion-col>
+        
+        <ion-col size="11" class="ion-align-self-center">
+          
+          <h3 class="title">REGULARIZA</h3>
+        </ion-col>
+      </ion-row>
+      <!-- titulo de empresa -->
+      <ion-row size="12" *ngIf="user" id="dateInf">
+        <ion-col size="9">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
+        </ion-col>
+        <ion-col size="3">
+          <span class="date-grey">
+            {{ today | date: "dd/MM/yyy" }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-header>
+  <ion-content fullscreen="false" class="ion-padding">
+    <ion-grid>
+
+      <ion-row size="12"  >
+        <ion-col size="6" >
+          <ion-card scroll-y="false" scroll-x="false" >
+            <ion-card-header>
+              <ion-label floating class="item-titulo2">VALOR TOTAL STOCK</ion-label>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label floating class="item-titulo3">${{valorStock | number}}</ion-label>
+            </ion-card-content>
+          </ion-card>
+          <!-- <ion-card scroll-y="false" scroll-x="false" >
+            <ion-card-header>
+              <ion-label floating class="item-titulo2">VALOR TOTAL STOCK DIF.</ion-label>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label floating class="item-titulo4">${{valorStockDif | number}}</ion-label>
+            </ion-card-content>
+          </ion-card> -->
+        </ion-col>
+        <ion-col size="6" >
+          <br>
+          <ion-button shape="round" (click)="showValidaProcesar()" color="success" expand="full"  *ngIf="this.regulariza !== false ">
+            REGULARIZAR
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-card scroll-y="false" scroll-x="false" >
+
+        <ion-card-header>
+          <ion-row size="12" class="item-titulo" >
+
+            <ion-col size="2" >
+              <ion-label floating>REF.</ion-label>
+            </ion-col>
+            <ion-col size="5" >
+              <ion-label floating>DESCRIPCION</ion-label>
+            </ion-col>
+            <ion-col size="2" >
+              <ion-label floating>MEDIDA</ion-label>
+            </ion-col>
+            <ion-col size="2">
+              <ion-label floating>CONTEO</ion-label>
+            </ion-col>
+            <!-- <ion-col size="1.5">
+              <ion-label floating>SISTEMA</ion-label>
+            </ion-col>
+            <ion-col size="1.5">
+              <ion-label floating>DIFERENCIA</ion-label>
+            </ion-col> -->
+            <ion-col size="1">
+              <ion-label floating>VALOR</ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-card-header>
+        <ion-card-content>
+         <!-- <ion-list *ngFor="let item of data" size="12">
+            <ion-item>
+                <ion-label>
+                  <span >{{item.descripcion}}</span>
+                </ion-label>
+            </ion-item>
+         </ion-list> -->
+
+        <ion-row size="12" class="item-articulo" *ngFor="let item of data let i=index;">
+
+          <ion-col size="2" >
+            <ion-label floating>{{item.referencia}}</ion-label>
+          </ion-col>
+          <ion-col size="5" >
+            <ion-label floating>{{item.descripcion}}</ion-label>
+          </ion-col>
+          <ion-col size="2" >
+            <ion-label floating>{{item.medida}}</ion-label>
+          </ion-col>
+          <ion-col size="2">
+            <ion-label floating>{{item.unidades}}</ion-label>
+          </ion-col>
+          <!-- <ion-col size="1.5">
+            <ion-label floating>{{item.stockAnterior}}</ion-label>
+          </ion-col>
+          <ion-col size="1.5">
+            <ion-label floating>{{item.diferencia}}</ion-label>
+          </ion-col> -->
+          <ion-col size="1">
+            <ion-label floating>${{item.valor}}</ion-label>
+          </ion-col>
+        </ion-row>
+         
+        </ion-card-content>
+     </ion-card>
+ 
+    </ion-grid>
+  </ion-content>
+
+</ion-app>

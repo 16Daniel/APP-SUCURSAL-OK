@@ -111,6 +111,36 @@ ion-alert.custom-alert {
   }
 
 }
+ion-alert.inv {
+  --backdrop-opacity: 0.3;
+  background-color:rgb(209, 0, 0);
+  --width: 25%;
+  --height: 35%;
+  --max-width: 25%;
+  --max-height: 35%;
+
+  .alert-title {
+    color:brown;
+  
+    font-size: 25px;
+    font-weight: bold;
+  }
+  .alert-sub-title {
+  
+  
+    font-size: 25px;
+    padding-bottom: 10%;
+  }
+  .alert-message {
+    font-size: 20px;
+    padding-bottom: 20%;
+  }
+  .alert-button .alert-button-inner {
+    font-size: 25px;
+    
+  }
+
+}
 
 
 

@@ -41,6 +41,8 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { InventarioMensualComponent } from './task-otros/inventario-mensual/inventario-mensual.component';
+import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
@@ -75,6 +77,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     DialogUpdateStockPolloComponent,
     GraficaTiemposComponent,
     C25ptsComponent,
+    InventarioMensualComponent,
+    InventarioRegularizaComponent,
   ],
   imports: [
     CommonModule,

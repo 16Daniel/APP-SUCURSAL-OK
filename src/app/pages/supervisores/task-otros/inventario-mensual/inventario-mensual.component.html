@@ -1,0 +1,144 @@
+<ion-app>
+  <ion-header class="ion-no-border ion-padding">
+    <ion-grid>
+
+      <ion-row size="12">
+        <ion-col size="3">
+          <div>
+            <!-- <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR</p> -->
+              <ion-button (click)="return()" shape="round" color="warning" expand="full" size="small">
+                REGRESAR
+              </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="9"></ion-col>
+      </ion-row>
+      <br>
+      
+      <ion-row size="12">
+        <ion-col size="1">
+          <img src="./assets/icon/ilustracion_stock_de_pollo.png" alt="Espectativa de venta" />
+        </ion-col>
+        
+        <ion-col size="11" class="ion-align-self-center">
+          
+          <h3 class="title">INV. MENSUAL</h3>
+        </ion-col>
+      </ion-row>
+      <!-- titulo de empresa -->
+      <ion-row size="12" *ngIf="user" id="dateInf">
+        <ion-col size="9">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
+        </ion-col>
+        <ion-col size="3">
+          <span class="date-grey">
+            {{ today | date: "dd/MM/yyy" }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-header>
+  <ion-content fullscreen="false" class="ion-padding">
+    <ion-grid>
+       
+      <ion-row>
+        <ion-col size="12" class="ion-align-self-center">
+          <input [(ngModel)]="filtro" placeholder="Escribe para filtrar" class="i-filter">
+          <button (click)="limpiarfiltro()" *ngIf="this.filtro !='' " class="btn-f">
+            BORRAR FILTRO
+          </button>
+        </ion-col>  
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-button shape="round" color="dark" expand="full" (click)="iniciaCaptura()" *ngIf="this.pendiente == false ">
+            COMENZAR CAPTURA
+          </ion-button>
+          <!-- <ion-button shape="round" color="dark" expand="full"  *ngIf="this.regulariza !== false ">
+            REGULARIZAR
+          </ion-button> -->
+        </ion-col> 
+        <ion-col size="4" class="ion-align-self-center">
+          
+        </ion-col>  
+        <ion-col size="4" class="ion-align-self-center">
+          
+        </ion-col> 
+      </ion-row>
+     
+      <ion-row size="12">
+        <ion-col size="3" class="ion-align-self-center">
+          <span class="subtitle-azul">ARTICULO</span>
+        </ion-col>
+        <ion-col size="3" class="ion-align-self-center">
+          <span class="subtitle-azul">UDS</span>
+        </ion-col>
+        <ion-col size="1" class="ion-align-self-center">
+          <span class="subtitle-azul">MEDIDA</span>
+        </ion-col>
+        <ion-col size="4" class="ion-align-self-center">
+        </ion-col>
+      </ion-row>
+      <div *ngIf="data !== []" id="datosInv">
+        <ion-row size="12" class="my-3" *ngFor="let item of filtrarDatos();  let i=index;">
+
+          <ion-col size="3" class="ion-align-self-center">
+            <!-- <ion-label floating class="item-rojo" *ngIf="this.difSistema[i] == true">{{item.descripcion}}</ion-label> -->
+            <ion-label floating *ngIf="this.difSistema[i] == true">{{item.descripcion}}</ion-label>
+            <ion-label floating *ngIf="this.difSistema[i] == false">{{item.descripcion}}</ion-label>
+          </ion-col>
+          <ion-col size="3">
+            <ion-row size="12">
+              <ion-col size="12" class="ion-align-self-center">
+                <ion-card class="closed">
+                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS" [disabled]="this.modificar[i] === false">
+                  </ion-input>
+                </ion-card>
+              </ion-col>
+              
+            </ion-row>
+            <!-- <ion-label style="color: #ad182d; font-size: 12px" *ngIf="activeAmount">Campo requerido</ion-label> -->
+          </ion-col>
+
+          <ion-col size="1" class="ion-align-self-center">
+            <span> {{item.unidadmedida}}</span>
+          </ion-col>
+
+          <ion-col size="2" class="ion-align-self-center">
+            <!-- <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full"> -->
+            <ion-button shape="round" color="danger" expand="full" (click)="addCaptura(item,i)" *ngIf="this.validado[i] !== false && this.modificar[i] !== false" [disabled]="this.inactivo[i] === true">
+              CAPTURAR
+            </ion-button>
+            <ion-button shape="round" color="dark" expand="full"  (click)="iniciaModificar(i)" *ngIf="this.validado[i] === false && this.modificar[i] === false">
+              MODIFICAR
+            </ion-button>
+            <ion-button shape="round" color="secondary" expand="full" (click)="addActualizacion(item,i)" *ngIf="this.modificar[i] !== false && this.validado[i] === false">
+              ACTUALIZAR
+            </ion-button>
+            <!-- <ion-button shape="rounded-pill" color="success" *ngIf="this.validado[i] === false">SE CAPTURO CORRECTAMENTE</ion-button> -->
+          </ion-col>
+        </ion-row>
+        <!-- </ng-template> -->
+
+
+        <br>
+      </div>
+      <ion-row>
+        <ion-col size="4" class="ion-align-self-center">
+          <ion-button shape="round" color="dark" expand="full" (click)="irRegulariza()" *ngIf="this.regulariza !== false ">
+            PRELIMINAR
+          </ion-button>
+        </ion-col> 
+        <ion-col size="4" class="ion-align-self-center">
+          
+        </ion-col>  
+        <ion-col size="4" class="ion-align-self-center">
+          
+        </ion-col> 
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+
+</ion-app>

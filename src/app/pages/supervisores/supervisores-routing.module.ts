@@ -22,6 +22,8 @@ import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-
 import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
 import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
 import { C25ptsComponent } from './graficas/c25pts/c25pts.component';
+import { InventarioMensualComponent } from './task-otros/inventario-mensual/inventario-mensual.component';
+import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
 const routes: Routes = [
   {
     path: '',
@@ -58,6 +60,14 @@ const routes: Routes = [
   {
     path: 'inventario-semanal/:turno/:id/:us',
     component: InventarioSemanalComponent,
+  },
+  {
+    path: 'inventario-mensual/:turno/:id/:us',
+    component: InventarioMensualComponent,
+  },
+  {
+    path: 'inventario-regulariza/:turno/:registro',
+    component: InventarioRegularizaComponent,
   },
   {
     path: 'mesa-espera/:turno/:id/:us',

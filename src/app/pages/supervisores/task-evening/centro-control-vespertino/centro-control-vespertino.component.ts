@@ -49,7 +49,9 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public contador1 = null;
   public Inventario;
   public SemInv = false;
-
+  public activoInv = 0;
+  public invMensual = false;
+  public registro;
   public barProgressTask: number;
   public barProgressTask1: number;
   public color: string;
@@ -79,22 +81,11 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     this.getDataControl(this.task);
     // this.notificationAlarm();
     this.getInventario();
+    this.turnoActual();
+    this.invMensualActivo();
     this.audio.preload('alerta', 'assets/audio/1.mp3');
+    this.GetRegistro();
     
-    var Hrs = new Date().getHours();
-    var ampm = Hrs >= 12 ? 'PM' : 'AM';
-    if(ampm == "PM" && Hrs >= 22){
-      this.SemInv = true;
-    }
-    else{
-      if(Hrs <= 3){
-        this.SemInv = true;
-      }
-      else{
-        this.SemInv = false;
-      }
-      
-    }
 
 
   }
@@ -132,7 +123,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     this.stopaudioLoop();
   }
   getDataControl(task) {
-    // this.load.presentLoading('Cargando..');
+     this.load.present('Cargando..');
     if(task != 3){
     this.service
       .serviceGeneralGet(`ControlCenter/${this.user.branchId}/${this.vespertino}/${task}/${this.user.id}/Manager`)
@@ -180,11 +171,54 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
         
 
         
-
+        this.load.dismiss();
         }
+        else{this.load.dismiss();}
         
       });
     }
+    else{this.load.dismiss();}
+  }
+
+  GetRegistro(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetRegistro?id_sucursal=${this.user.branch}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.registro = resp.result;
+          if(this.registro.id != 0 ){
+            if(this.registro.procesado == false){
+            console.log('con registro pendiente',this.registro);
+            
+            this.invMensual = true;
+            }
+            else{
+              console.log('registro procesado--',this.registro);
+              const fecha1= new Date();
+              const fecha2= new Date(this.registro.dateCaptura);
+              this.invMensual = true;
+              
+              var diasdif= fecha1.getTime() - fecha2.getTime();
+	            var contdias = Math.round(diasdif/(1000*60*60*24));
+              console.log('diff: ',contdias);
+              if(contdias < 10){
+                this.invMensual = false;
+                //console.log('contdias < 10');
+              }
+            }
+          }
+          else{
+            this.invMensual = true;
+            console.log('sin registro pendiente');
+          }
+        
+        }
+        else{
+          console.log('sin registro');
+        }
+        console.log('invMensual: ', this.invMensual);
+      });
+      
   }
 
   showUsuario(){
@@ -197,6 +231,60 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       }
       else{
       this.ValUsuario = 1;
+      }
+    }
+  }
+
+  invMensualActivo(){
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+
+    this.today = new Date();
+    var tomorrow = new Date();
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() -1);
+    tomorrow.setDate(tomorrow.getDate()+1);
+    var hoy = this.today.getDate();
+    var siguiente = tomorrow.getDate();
+    var ayer = yesterday.getDate();
+
+    console.log('ayer: ', ayer);
+    console.log('hoy: ', hoy); 
+    console.log('mañana: ', siguiente); 
+
+    if( hoy ==1 || siguiente==1){
+      var time = this.today.getHours();
+      if(ampm == "PM" && Hrs >= 22){
+        if ( time >= 22 && siguiente == 1) {
+          this.activoInv = 1;
+      
+        }
+
+      }
+      else{
+        if(Hrs <= 3 && hoy == 1){
+          this.activoInv = 1;
+        }
+        else{
+          this.activoInv = 0;
+        }
+        
+      }
+      console.log('inv muestra: ', this.activoInv); 
+    }
+    if(this.activoInv == 0){
+      
+      if(ampm == "PM" && Hrs >= 22){
+       this.SemInv = true;
+      }
+      else{
+        if(Hrs <= 3){
+         this.SemInv = true;
+        }
+        else{
+        this.SemInv = false;
+        }
+      
       }
     }
   }
@@ -336,7 +424,9 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       this.stopTimer();
       this.contador = setInterval((n) => { 
         this.notificationVoladoEfectivo();
+        this.invMensualActivo();
         this.tiempoCaptura();
+        this.turnoActual();
         console.log('muestra timer'); }, 20000);
     }
     
@@ -376,11 +466,20 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
         console.log('Hora:', time);
         
          
-        if ( time > 19 && time < 21) {
+        if ( time > 2 && time < 17) {
           this.tunoCorre = 1;
           this.alertFinal();
         }
         
+  
+        if (time > 16 && time <= 23) {
+            this.tunoCorre = 2;
+            
+          }
+          if(time >= 0 && time < 3) {
+            this.tunoCorre = 2;
+            
+          }
   
     }
 
@@ -547,7 +646,7 @@ showValidaTermina() {
 }
 
 getInventario() {
-  this.load.presentLoading('Cargando..');
+  this.load.present('Cargando inv..');
   this.service
     .serviceGeneralGet(`StockChicken/GetStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
     .subscribe((resp) => {
@@ -557,7 +656,9 @@ getInventario() {
           element.cantidad = 0;
         });
         console.log("objetos inv: ",this.Inventario.length);
+        this.load.dismiss();
       }
+      else{this.load.dismiss();}
       console.log('s ',resp.success);
     });
   console.log('sin data inventario');
@@ -570,7 +671,7 @@ validacionAsistencia() {
 }
 terminarTurno() {
   this.stopTimer();
-  this.router.navigateByUrl('supervisor');
+  this.router.navigateByUrl('login');
 }
 remisiones(id) {
   if (id === null) {
@@ -713,6 +814,21 @@ stockPollo(id: number) {
     this.stopTimer();
     this.router.navigateByUrl('supervisor/inventario-semanal/2/' + id+'/'+this.ValUsuario);
     
+  }
+}
+
+invMensualSucursal(id: number) {
+  if(this.Inventario.length != 0){
+    if (id === null) {
+      id = 0;
+    }
+    else{ id=0;}
+    
+  }
+  if(this.invMensual === true){
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/inventario-mensual/2/' + id+'/'+this.ValUsuario);
+    console.log('accede');
   }
 }
 

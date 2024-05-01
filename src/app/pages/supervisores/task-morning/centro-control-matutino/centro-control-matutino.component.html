@@ -107,6 +107,11 @@
                     <span class="btnMenu">REPORTES</span>
                   </ion-segment-button>
                 </ion-col>
+                <ion-col size="4">
+                  <ion-segment-button value="4" (click)="getDataControl(4)" *ngIf="this.activoInv === 1">
+                    <span class="btnMenu">INVENTARIO</span>
+                  </ion-segment-button>
+                </ion-col>
                 
               </ion-row>
             </ion-segment>
@@ -836,6 +841,48 @@
             </ion-col>    -->
 
 
+        </ion-row>
+
+        <ion-row size="12" *ngSwitchCase="'4'">
+          <!--***** S E C C I O N   I N V E N T A R I O ******-->
+               
+          <!-- -----------INVENTRIO MENSUAL------------ -->
+          <ion-col size="6" *ngIf="data[0]">
+            <ion-card (click)="invMensualSucursal(user.branchId)">
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <img *ngIf="this.invMensual === true" src="./assets/icon/ilustracion_stock_de_pollo.png" alt="" />
+                    <img *ngIf="this.invMensual === false" src="./assets/icon/ilustracion_check.png" alt="" />
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div>
+                          <h3 class="title-tareas">INVENTARIO MENSUAL</h3>
+                        </div>
+                      </ion-col>
+
+                      <ion-col size="12">
+                        <span class="title-progress-bar">NIVEL DE PROGRESO</span>
+                        <br>
+                        <ion-progress-bar *ngIf="this.invMensual === true" color="danger" value="0">
+                        </ion-progress-bar>
+                        <ion-progress-bar *ngIf="this.invMensual === false" color="success"value="1">
+                        </ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span *ngIf="this.invMensual === true" class="title-progress-bar">0% COMPLETADO</span>
+                          <span *ngIf="this.invMensual === false" class="title-progress-bar">100% COMPLETADO</span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
         </ion-row>
 
          <ion-row size="12" *ngSwitchCase="'2'">
