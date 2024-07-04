@@ -84,7 +84,7 @@
             <ion-row size="12">
               <ion-col size="9" class="ion-align-self-center">
                 <ion-card class="closed">
-                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS" [disabled]="this.validado[i] === false">
+                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS"  disabled>
                   </ion-input>
                 </ion-card>
               </ion-col>
@@ -97,6 +97,12 @@
           <ion-col size="3" class="ion-align-self-center">
             <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
               Validar
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="1" class="ion-align-self-center">
+            <ion-button (click)="editarvalor(item.descripcion,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+              <i class='bx bxs-edit bx-sm' ></i>
             </ion-button>
           </ion-col>
           <!-- <ion-col size="2" class="ion-align-self-center">

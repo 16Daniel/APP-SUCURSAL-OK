@@ -9,7 +9,8 @@ import { DialogUpdateStockPolloComponent } from '../../dialog/dialog-update-stoc
 import { AlertController } from '@ionic/angular';
 import { DatePipe, formatNumber } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-
+import { ModalCalculoInventarioComponent } from 'src/app/pages/shared/modal-calculo-inventario/modal-calculo-inventario.component';
+import { param } from 'jquery';
 
 @Component({
   selector: 'app-inventario-semanal',
@@ -33,6 +34,8 @@ export class InventarioSemanalComponent implements OnInit {
   handlerRespValor;
   recarga = 0;
   filtro: string = '';
+  public ubicacionesinv:UbicacionInvModel[] = []; 
+
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -48,14 +51,17 @@ export class InventarioSemanalComponent implements OnInit {
     console.log(this.routerActive.snapshot.paramMap.get('id'));
     this.idSucursal = this.routerActive.snapshot.paramMap.get('id');
     this.turno = this.routerActive.snapshot.paramMap.get('turno');
-    this.getData();
+   // this.getData();
     console.log('user: ', this.user);
     console.log('ionview ');
     
     
-    
   }
-  ngOnInit() { }
+  ngOnInit() 
+  {
+    this.getDataInventario();
+
+   }
   
   validaO(i){
      if(this.contador[i] >= 3 ){
@@ -74,14 +80,22 @@ export class InventarioSemanalComponent implements OnInit {
       .subscribe((resp) => {
         if (resp.success) {
           this.data = resp.result;
-          debugger
           // Función de comparación personalizada
           const compararPorOrdenamiento = (a, b) => a.orden - b.orden;
 
           // Aplicar la ordenación al array
           this.data.sort(compararPorOrdenamiento);
           this.data.forEach(element => {
-            element.cantidad = 0;
+
+          let dataf = this.ubicacionesinv.filter(x=> x.codart == element.codarticulo && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+              if(dataf.length>0)
+                {
+                  element.cantidad = dataf[0].total;
+                }else
+                {
+                  element.cantidad = 0;
+                }
+            
           });
           console.log('data: ',this.data.length);
           console.log('data: ',this.data);
@@ -91,6 +105,19 @@ export class InventarioSemanalComponent implements OnInit {
     console.log('sin data');
     
   }
+
+
+  getDataInventario() {
+    this.load.presentLoading('Cargando..');
+    this.service
+      .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+      .subscribe((resp) => {
+        this.ubicacionesinv =resp; 
+        this.getData();    
+      });
+    
+  }
+
 
   return() {
     // window.history.back();
@@ -145,7 +172,7 @@ export class InventarioSemanalComponent implements OnInit {
         console.log(resp);
 
         if (resp.success) {
-
+          this.eliminarUbicacionesInv(item.codarticulo);
           this.load.presentLoading('Cantidad Permitida');
           this.presentAlert(i);
           // this.data.status = 'post';
@@ -335,6 +362,38 @@ export class InventarioSemanalComponent implements OnInit {
     this.filtrarDatos(); 
   }
 
+async editarvalor(name:string,ida:number, codart:number,i:number)
+{
+   let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  const modal = await this.modalController.create({
+    component: ModalCalculoInventarioComponent,
+    componentProps: {
+      param1: name,
+      param2: ida,
+      param3: dataf
+    }
+  });
+  await modal.present();
+}
+
+eliminarUbicacionesInv(codart:number)
+{
+  
+  let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  
+  if(dataf.length>0)
+    {
+      this.service
+      .serviceGeneralGet(`StockChicken/EliminarUbicacionesInventario/${dataf[0].id}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          
+        }
+      });
+    }
+
+}
+
 }
 class InvModel {
   id: number;
@@ -349,3 +408,13 @@ class InvModel {
   updatedBy: number;
   updatedDate: String;
 }
+ class UbicacionInvModel
+ {
+  id:number;
+  codart: number;
+  jdata: string;
+  idu:string;
+  ids:string;
+  vista:number;
+  total:number
+ }
