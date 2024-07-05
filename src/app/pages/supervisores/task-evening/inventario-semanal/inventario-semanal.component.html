@@ -24,6 +24,7 @@
         <ion-col size="11" class="ion-align-self-center">
           
           <h3 class="title">INV. VESP</h3>
+          <h5 class="title fs-3 ms-1 fw-bold">V1.18</h5>
         </ion-col>
       </ion-row>
       <!-- titulo de empresa -->
@@ -94,14 +95,14 @@
             </ion-row>
             <!-- <ion-label style="color: #ad182d; font-size: 12px" *ngIf="activeAmount">Campo requerido</ion-label> -->
           </ion-col>
-          <ion-col size="3" class="ion-align-self-center">
-            <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+          <ion-col size="3" class="ion-align-self-center" *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false" >
               Validar
             </ion-button>
           </ion-col>
 
-          <ion-col size="1" class="ion-align-self-center">
-            <ion-button (click)="editarvalor(item.descripcion,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+          <ion-col size="1" class="ion-align-self-center"  *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="editarvalor(item,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
               <i class='bx bxs-edit bx-sm' ></i>
             </ion-button>
           </ion-col>
@@ -114,7 +115,7 @@
           </ion-col> -->
 
           <ion-col size="3" class="ion-align-self-center">
-            <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full" [disabled]="this.contador[i] !== 3 " *ngIf=" 3 >= this.contador[i]">
+            <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full" *ngIf=" 3 == this.contador[i]">
               Guardar
             </ion-button>
             <ion-button shape="rounded-pill" color="success" *ngIf="this.contador[i] > 3">SE GUARDO CORRECTAMENTE</ion-button>

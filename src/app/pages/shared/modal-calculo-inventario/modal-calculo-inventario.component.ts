@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { NavParams } from '@ionic/angular';
 import { ServiceGeneralService } from 'src/app/core/services/service-general/service-general.service';
+import { LoaderComponent } from '../../dialog-general/loader/loader.component';
 @Component({
   selector: 'app-modal-calculo-inventario',
   templateUrl: './modal-calculo-inventario.component.html',
@@ -14,7 +15,7 @@ public descripcion:string='';
 public codarticulo:number|undefined;
 public userdata:any; 
 public isGreen:boolean = false; 
-  constructor(private modalController: ModalController,private navParams: NavParams,public service: ServiceGeneralService,) { }
+  constructor(private modalController: ModalController,private navParams: NavParams,public service: ServiceGeneralService,public load: LoaderComponent,) { }
 
   ngOnInit(): void {
 
@@ -34,8 +35,12 @@ public isGreen:boolean = false;
    this.userdata = JSON.parse(localStorage.getItem('userData'));
   }
 
-  dismiss() {
-    this.modalController.dismiss();
+  dismiss(guardado:boolean) {
+    this.modalController.dismiss({
+      'guardado': guardado,
+      'total': this.total,
+      'arr': JSON.stringify(this.ubicaciones),
+    });
   }
 
 addubicacion()
@@ -68,6 +73,7 @@ gettotal()
 
 guardarcalculoinv()
 {
+  this.load.present('Cargando..'); 
   this.isGreen = true; 
   let data = {
     codart: this.codarticulo,
@@ -80,10 +86,10 @@ guardarcalculoinv()
   this.service
       .serviceGeneralPostWithUrl(`StockChicken/GuardarubicacionesInventario`,data)
       .subscribe((resp) => {
-        window.location.reload(); 
+        this.dismiss(true); 
+        this.load.dismiss(); 
       });
 }
-
 
 
 }

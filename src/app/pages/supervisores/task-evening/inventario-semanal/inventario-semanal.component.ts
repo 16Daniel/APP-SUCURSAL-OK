@@ -199,8 +199,6 @@ export class InventarioSemanalComponent implements OnInit {
     this.dataInv.updatedBy = this.user.id;
     this.dataInv.updatedDate = this.createDate;
     console.log('Obj To send  post=> ', this.dataInv);
-
-    this.load.present('Guardando..');
     
 
     this.service
@@ -344,7 +342,6 @@ export class InventarioSemanalComponent implements OnInit {
       console.log('onDidDismiss resolved with role', role);
       this.contador[i] += 1;
       this.validaO(i);
-      this.ngOnInit();
   }
   
   filtrarDatos() {
@@ -363,18 +360,39 @@ export class InventarioSemanalComponent implements OnInit {
     this.filtrarDatos(); 
   }
 
-async editarvalor(name:string,ida:number, codart:number,i:number)
+async editarvalor(item:any,ida:number, codart:number,i:number)
 {
    let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
   const modal = await this.modalController.create({
     component: ModalCalculoInventarioComponent,
     componentProps: {
-      param1: name,
+      param1: item.descripcion,
       param2: ida,
       param3: dataf
     }
   });
   await modal.present();
+
+  const { data } = await modal.onWillDismiss();
+  if(data.guardado)
+    {
+      if(dataf.length==0)
+        {
+          this.service
+          .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+          .subscribe((resp) => {
+            this.ubicacionesinv =resp;   
+            item.cantidad = data.total; 
+          });
+        } else
+        {
+          item.cantidad = data.total; 
+            dataf[0].jdata = data.arr; 
+          dataf[0].total = data.total; 
+        }
+    
+     
+    }
 }
 
 eliminarUbicacionesInv(codart:number)
