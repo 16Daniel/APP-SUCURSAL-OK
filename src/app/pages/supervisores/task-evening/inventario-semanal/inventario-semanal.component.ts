@@ -74,7 +74,7 @@ export class InventarioSemanalComponent implements OnInit {
   }
   
   getData() {
-    this.load.presentLoading('Cargando..');
+    this.load.present('Cargando..'); 
     this.service
       .serviceGeneralGet(`StockChicken/GetStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
@@ -99,6 +99,7 @@ export class InventarioSemanalComponent implements OnInit {
           });
           console.log('data: ',this.data.length);
           console.log('data: ',this.data);
+          this.load.dismiss(); 
         }
         console.log('s ',resp.success);
       });

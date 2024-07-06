@@ -64,7 +64,9 @@ export class InventarioRegularizaComponent implements OnInit {
   }
  
   getCapturas(reg) {
-    this.load.presentLoading('Cargando..');
+   // this.load.presentLoading('Cargando..');
+
+    this.load.present('Cargando..'); 
     this.service
       .serviceGeneralGet(`StockChicken/GetCaptura?registro=${reg}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
@@ -73,7 +75,7 @@ export class InventarioRegularizaComponent implements OnInit {
           console.log('Capturas: ', this.data);
           this.getValor();
           this.getValorDif();
-
+          this.load.dismiss();
         }
         //console.log('s ',resp.success);
       });
