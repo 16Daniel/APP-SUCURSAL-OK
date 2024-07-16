@@ -54,13 +54,13 @@ export class InventarioSemanalComponent implements OnInit {
    // this.getData();
     console.log('user: ', this.user);
     console.log('ionview ');
-    
+    this.getDataInventario();
+
     
   }
   ngOnInit() 
   {
-    this.getDataInventario();
-
+    
    }
   
   validaO(i){
