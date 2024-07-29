@@ -45,6 +45,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   public barProgressTask: number;
   public barProgressTask1: number;
   public color: string;
+  public diferenciaFecha:boolean = false; 
   constructor(
     public router: Router,public routerActive: ActivatedRoute,
     public service: ServiceGeneralService,
@@ -75,11 +76,6 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.audio.preload('alerta', 'assets/audio/1.mp3');
     this.getInventario();
     this.GetRegistro();
-  
-
- 
-
-
 
   }
   ngOnInit() {
@@ -161,7 +157,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     var hoy = this.today.getDate();
     var siguiente = tomorrow.getDate();
     var ayer = yesterday.getDate();
-
+    this.getFechaServidor(); 
     console.log('ayer: ', ayer);
     console.log('hoy: ', hoy); 
     console.log('mañana: ', siguiente); 
@@ -752,5 +748,37 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.router.navigateByUrl('supervisor/c25pts/1/'+this.ValUsuario);
   }
+
+  getFechaServidor()
+{
+  this.service
+  .serviceGeneralGet('StockChicken/getFechaServidor')
+  .subscribe((resp) => {
+    if (resp.success) {
+      let fechaservidor:Date = new Date(resp.date.toString());
+      if(this.today.getDate() == fechaservidor.getDate() && this.today.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == this.today.getFullYear())
+        {
+          this.diferenciaFecha = false; 
+        } else{
+            let todaymenos:Date = new Date(this.today.getTime() - 30 * 60000); 
+            if(todaymenos.getDate() == fechaservidor.getDate() && todaymenos.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymenos.getFullYear())
+              {
+                this.diferenciaFecha = false; 
+              } else
+              {  
+                let todaymas:Date = new Date(this.today.getTime() + 30 * 60000); 
+                if(todaymas.getDate() == fechaservidor.getDate() && todaymas.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymas.getFullYear())
+                  {
+                    this.diferenciaFecha = false; 
+                  } else
+                  {
+                    this.diferenciaFecha = true;  alert("Configura correctame la fecha en tu dispositivo");
+                  }
+              }
+          }
+    }
+  });
+}
+
 }
 

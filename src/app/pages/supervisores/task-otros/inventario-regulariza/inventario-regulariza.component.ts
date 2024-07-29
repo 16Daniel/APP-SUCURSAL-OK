@@ -107,6 +107,7 @@ export class InventarioRegularizaComponent implements OnInit {
           this.data= resp.result;
           console.log('Capturas: ', this.data);
           this.getValor();
+          this.eliminarubicacionesinventarioM(); 
           this.presentAlert();
           this.load.dismiss();
         }
@@ -158,5 +159,15 @@ export class InventarioRegularizaComponent implements OnInit {
       const { role } = await alert.onDidDismiss();
       this.router.navigateByUrl('login');
   }
+
+eliminarubicacionesinventarioM()
+{
+
+  this.service
+      .serviceGeneralGet(`StockChicken/EliminarUbicacionesInventarioMensual/${this.user.branchId}/${this.user.id}`)
+      .subscribe((resp) => {
+        
+      });
+}
 
 }

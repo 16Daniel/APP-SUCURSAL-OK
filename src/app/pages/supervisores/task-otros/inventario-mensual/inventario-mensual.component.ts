@@ -8,6 +8,8 @@ import { DialogUpdateStockPolloComponent } from '../../dialog/dialog-update-stoc
 import { AlertController } from '@ionic/angular';
 import { DatePipe, formatNumber } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ModalCalculoInventarioComponent } from 'src/app/pages/shared/modal-calculo-inventario/modal-calculo-inventario.component';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-inventario-mensual',
@@ -37,6 +39,8 @@ export class InventarioMensualComponent implements OnInit {
   handlerRespValor;
   recarga = 0;
   filtro: string = '';
+  public ubicacionesinv:UbicacionInvModelM[] = []; 
+
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -46,7 +50,7 @@ export class InventarioMensualComponent implements OnInit {
     public alertController: AlertController,
     public datepipe: DatePipe,
 
-  ) { }
+  ) {    }
   ionViewWillEnter() {
     this.user = JSON.parse(localStorage.getItem('userData'));
     console.log(this.routerActive.snapshot.paramMap.get('id'));
@@ -55,12 +59,10 @@ export class InventarioMensualComponent implements OnInit {
    
     console.log('user: ', this.user);
     console.log('ionview ');
-    this.GetRegistro();
-    
-    
-    
+    this.GetRegistro();   
+   
   }
-  ngOnInit() { }
+  ngOnInit() {  }
   
   validaO(i){
      if(this.contador[i] >= 3 ){
@@ -92,7 +94,7 @@ export class InventarioMensualComponent implements OnInit {
   addActualizacion(item,i){
     console.log('id actualizar: ',this.data[i].id);
     this.service
-    .serviceGeneralPut(`StockChicken/ModificaCaptura?idcaptura=${this.data[i].id}&database=${this.user.dataBase}&unidades=${item.cantidad}`, ``)
+    .serviceGeneralPut(`StockChicken/ModificaCaptura?idcaptura=${this.data[i].id}&database=${this.user.dataBase}&unidades=${item.cantidadSuma}`, ``)
     .subscribe((data) => {
       if (data.success) {
         // location.reload();
@@ -104,7 +106,7 @@ export class InventarioMensualComponent implements OnInit {
   addCaptura(item,i){
     this.inactivo[i]= true;
     this.service
-    .serviceGeneralPostWithUrl(`StockChicken/AddCaptura?city=${this.user.stateId}&sucursal=${this.user.branchId}&codarticulo=${item.codarticulo}&unidades=${item.cantidad}&codAlmacen=${item.codalmacen}&registro=${this.registro.id}`, ``)
+    .serviceGeneralPostWithUrl(`StockChicken/AddCaptura?city=${this.user.stateId}&sucursal=${this.user.branchId}&codarticulo=${item.codarticulo}&unidades=${item.cantidadSuma}&codAlmacen=${item.codalmacen}&registro=${this.registro.id}`, ``)
     .subscribe((resp) => {
       if (resp.success) {
         console.log('addcaptura: ',resp.result);
@@ -127,7 +129,7 @@ export class InventarioMensualComponent implements OnInit {
             if(this.registro.procesado == false){
             console.log('con registro pendiente',this.registro);
             this.getData();
-            
+            this.getDataInventario(); 
             this.pendiente = true;
             }
             else{
@@ -181,11 +183,19 @@ export class InventarioMensualComponent implements OnInit {
           this.creaDifSistema(this.data.length);
           // Función de comparación personalizada
           const compararPorOrdenamiento = (a, b) => a.orden - b.orden;
-
+   
           // Aplicar la ordenación al array
           this.data.sort(compararPorOrdenamiento);
           this.data.forEach(element => {
             element.cantidad = 0;
+            let dataf = this.ubicacionesinv.filter(x=> x.codart == element.codarticulo && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 2);
+            if(dataf.length>0)
+              {
+                element.cantidadSuma = dataf[0].total;
+              }else
+              {
+                element.cantidadSuma = 0;
+              }
           });
           console.log('data: ',this.data.length);
           console.log('data: ',this.data);
@@ -432,6 +442,85 @@ export class InventarioMensualComponent implements OnInit {
     this.filtrarDatos(); 
   }
 
+
+  getDataInventario() {
+    this.load.presentLoading('Cargando..');
+    this.service
+      .serviceGeneralGet(`StockChicken/getUbicacionesInventarioMensual`)
+      .subscribe((resp) => {
+        this.ubicacionesinv =resp; 
+        this.getData();    
+      });
+    
+  }
+
+
+  async editarvalor(item:any,ida:number, codart:number,i:number)
+{
+   let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 2);
+  const modal = await this.modalController.create({
+    component: ModalCalculoInventarioComponent,
+    componentProps: {
+      param1: item.descripcion,
+      param2: ida,
+      param3: dataf,
+      vista: 2
+    }
+  });
+  await modal.present();
+
+  const { data } = await modal.onWillDismiss();
+  if(data.guardado)
+    {
+      if(dataf.length==0)
+        {
+          this.service
+          .serviceGeneralGet(`StockChicken/getUbicacionesInventarioMensual`)
+          .subscribe((resp) => {
+            this.ubicacionesinv =resp;   
+            item.cantidadSuma = data.total; 
+          });
+        } else
+        {
+          item.cantidadSuma = data.total; 
+            dataf[0].jdata = data.arr; 
+          dataf[0].total = data.total; 
+        }
+    
+     
+    }
+}
+
+eliminarUbicacionesInv(codart:number)
+{
+  
+  let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 2);
+  
+  if(dataf.length>0)
+    {
+      this.service
+      .serviceGeneralGet(`StockChicken/EliminarUbicacionesInventario/${dataf[0].id}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          
+        }
+      });
+    }
+
+}
+
+getTotalubicaciones(element:any):Number
+{
+  let dataf = this.ubicacionesinv.filter(x=> x.codart == element.codarticulo && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 2);
+  if(dataf.length>0)
+    {
+      return dataf[0].total;
+    }else
+    {
+      return 0;
+    }
+}
+
 }
 class InvModel {
   id: number;
@@ -445,4 +534,15 @@ class InvModel {
   createdDate: String;
   updatedBy: number;
   updatedDate: String;
+}
+
+class UbicacionInvModelM
+{
+ id:number;
+ codart: number;
+ jdata: string;
+ idu:string;
+ ids:string;
+ vista:number;
+ total:number
 }

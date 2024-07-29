@@ -23,7 +23,8 @@
         
         <ion-col size="11" class="ion-align-self-center">
           
-          <h3 class="title">INV. MENSUAL</h3>
+          <h4 class="title">INV. MENSUAL</h4>
+          <h5 class="title fs-3 ms-1 fw-bold">V1.21</h5>
         </ion-col>
       </ion-row>
       <!-- titulo de empresa -->
@@ -73,14 +74,18 @@
           <span class="subtitle-azul">ARTICULO</span>
         </ion-col>
         <ion-col size="3" class="ion-align-self-center">
-          <span class="subtitle-azul">UDS</span>
+          <span class="subtitle-azul">SUMA</span>
+        </ion-col>
+        <ion-col size="2" class="ion-align-self-center">
+          <span class="subtitle-azul">CAPTURA</span>
         </ion-col>
         <ion-col size="1" class="ion-align-self-center">
-          <span class="subtitle-azul">MEDIDA</span>
+          <span class="subtitle-azul"></span>
         </ion-col>
-        <ion-col size="4" class="ion-align-self-center">
+        <ion-col size="3" class="ion-align-self-center">
         </ion-col>
       </ion-row>
+
       <div *ngIf="data !== []" id="datosInv">
         <ion-row size="12" class="my-3" *ngFor="let item of filtrarDatos();  let i=index;">
 
@@ -93,7 +98,7 @@
             <ion-row size="12">
               <ion-col size="12" class="ion-align-self-center">
                 <ion-card class="closed">
-                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS" [disabled]="this.modificar[i] === false">
+                  <ion-input [(ngModel)]="item.cantidadSuma" type="number" min="0" required placeholder="UDS" disabled>
                   </ion-input>
                 </ion-card>
               </ion-col>
@@ -103,9 +108,13 @@
           </ion-col>
 
           <ion-col size="1" class="ion-align-self-center">
-            <span> {{item.unidadmedida}}</span>
+            <div>{{item.cantidad}}</div>
           </ion-col>
 
+          <ion-col size="1" class="ion-align-self-center">
+            <span> {{item.unidadmedida}}</span>
+          </ion-col>
+          
           <ion-col size="2" class="ion-align-self-center">
             <!-- <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full"> -->
             <ion-button shape="round" color="danger" expand="full" (click)="addCaptura(item,i)" *ngIf="this.validado[i] !== false && this.modificar[i] !== false" [disabled]="this.inactivo[i] === true">
@@ -119,9 +128,18 @@
             </ion-button>
             <!-- <ion-button shape="rounded-pill" color="success" *ngIf="this.validado[i] === false">SE CAPTURO CORRECTAMENTE</ion-button> -->
           </ion-col>
+
+        
+
+          <ion-col size="1" class="ion-align-self-center" *ngIf="this.validado[i] !== false || this.modificar[i] === true">
+            <ion-button (click)="editarvalor(item,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" >
+              <i class='bx bxs-edit bx-sm' ></i>
+            </ion-button>
+          </ion-col>
+          
         </ion-row>
         <!-- </ng-template> -->
-
+         
 
         <br>
       </div>

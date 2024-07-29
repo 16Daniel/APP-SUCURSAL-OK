@@ -15,6 +15,7 @@ public descripcion:string='';
 public codarticulo:number|undefined;
 public userdata:any; 
 public isGreen:boolean = false; 
+public vista:number = 1; 
   constructor(private modalController: ModalController,private navParams: NavParams,public service: ServiceGeneralService,public load: LoaderComponent,) { }
 
   ngOnInit(): void {
@@ -31,6 +32,7 @@ public isGreen:boolean = false;
     }
    this.descripcion = this.navParams.get('param1');
    this.codarticulo = this.navParams.get('param2');
+   this.vista = this.navParams.get('vista');
 
    this.userdata = JSON.parse(localStorage.getItem('userData'));
   }
@@ -80,7 +82,7 @@ guardarcalculoinv()
     jdata: JSON.stringify(this.ubicaciones),
     idu: this.userdata.id.toString(),
     ids: this.userdata.branchId.toString(),
-    vista: 1,
+    vista: this.vista,
     total: this.total
   }
   this.service

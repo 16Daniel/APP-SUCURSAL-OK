@@ -368,7 +368,8 @@ async editarvalor(item:any,ida:number, codart:number,i:number)
     componentProps: {
       param1: item.descripcion,
       param2: ida,
-      param3: dataf
+      param3: dataf,
+      vista: 1
     }
   });
   await modal.present();

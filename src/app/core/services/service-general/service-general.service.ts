@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +45,15 @@ export class ServiceGeneralService {
   }
   public serviceGeneralDelete(url: string): Observable<any> {
     return this.http.delete(this.apiURL + url, { headers: this.headers });
+  }
+
+  testvpn():Observable<any>
+  {
+     return this.http.get<any>(this.apiURL + 'Dashboard/validarConexion',{headers:this.headers}).pipe(
+        timeout(7000), // Tiempo de espera de 5 segundos
+        catchError(error => {
+          return throwError(error);
+        })
+      );
   }
 }

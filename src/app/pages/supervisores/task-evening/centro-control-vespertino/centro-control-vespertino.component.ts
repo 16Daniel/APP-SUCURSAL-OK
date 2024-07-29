@@ -47,7 +47,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public tunoCorre = 0;
   public ValUsuario = 1;
   public contador1 = null;
-  public Inventario;
+  public Inventario = [];
   public SemInv = false;
   public activoInv = 0;
   public invMensual = false;
@@ -55,11 +55,13 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public barProgressTask: number;
   public barProgressTask1: number;
   public color: string;
+  public diferenciaFecha:boolean = false; 
 
   constructor(
     public router: Router,
     public service: ServiceGeneralService,
     public load: LoaderComponent,
+    public load2: LoaderComponent,
     public modalController: ModalController,
     public popoverCtrl: PopoverController,
     public alertController: AlertController,
@@ -71,36 +73,28 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
 
   ionViewWillEnter() {
     console.log('viewwillenter');
+    this.today = new Date();
     //this.user = JSON.parse(localStorage.getItem('userData'));
-    //console.log('user', this.user);
+    console.log('user', this.user);
     // obtener el nombre de sucursal
-    //this.branchId = this.user.branchId;
-    //this.task = this.routerActive.snapshot.paramMap.get(`idTarea`);
+    this.branchId = this.user.branchId;
+    this.task = this.routerActive.snapshot.paramMap.get(`idTarea`);
     // this.getBranch();
     //this.notificationVoladoEfectivo();
     this.getDataControl(this.task);
     // this.notificationAlarm();
-    this.getInventario();
-    this.turnoActual();
-    this.invMensualActivo();
-    this.audio.preload('alerta', 'assets/audio/1.mp3');
-    this.GetRegistro();
     
-
+    console.log('hora', this.today.getHours());
+    this.startTimer();
 
   }
   ngOnInit() {
-    this.today = new Date();
     this.user = JSON.parse(localStorage.getItem('userData'));
-    console.log('user', this.user);
-    this.task = this.routerActive.snapshot.paramMap.get(`idTarea`);
-    this.branchId = this.user.branchId;
     //this.getNotification();
     //this.notificationVoladoEfectivo();
     //this.getDataControl(this.task);
     //this.notificationAlarm();
-    console.log('hora', this.today.getHours());
-    this.startTimer();
+
 
     // if(this.today.getDay() === 0 || this.today.getDay() === 1 ){
     //   if(this.today.getDay() === 1 && this.today.getHours() < 7){
@@ -168,16 +162,18 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
         //       }
 
         //  }
-        
-
+      
         
         this.load.dismiss();
+        this.segundaCarga(); 
         }
-        else{this.load.dismiss();}
+        else{this.load.dismiss();
+          }
         
       });
     }
-    else{this.load.dismiss();}
+    else{this.load.dismiss();
+      }
   }
 
   GetRegistro(){
@@ -247,7 +243,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     var hoy = this.today.getDate();
     var siguiente = tomorrow.getDate();
     var ayer = yesterday.getDate();
-
+    this.getFechaServidor();
     console.log('ayer: ', ayer);
     console.log('hoy: ', hoy); 
     console.log('mañana: ', siguiente); 
@@ -646,7 +642,7 @@ showValidaTermina() {
 }
 
 getInventario() {
-  this.load.present('Cargando inv..');
+  this.load2.present('Cargando inv..');
   this.service
     .serviceGeneralGet(`StockChicken/GetStockV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
     .subscribe((resp) => {
@@ -656,14 +652,23 @@ getInventario() {
           element.cantidad = 0;
         });
         console.log("objetos inv: ",this.Inventario.length);
-        this.load.dismiss();
+       this.load2.dismiss();
       }
-      else{this.load.dismiss();}
+      else{this.load2.dismiss();
+        }
       console.log('s ',resp.success);
     });
   console.log('sin data inventario');
 }
 
+segundaCarga()
+{
+  this.getInventario();
+  this.turnoActual();
+  this.invMensualActivo();
+  this.audio.preload('alerta', 'assets/audio/1.mp3');
+  this.GetRegistro();
+}
 
 validacionAsistencia() {
   this.stopTimer();
@@ -837,6 +842,38 @@ graficaTiempos() {
     this.stopTimer();
     this.router.navigateByUrl('supervisor/grafica-tiempos/2/'+this.ValUsuario);
     
+}
+
+
+async getFechaServidor()
+{
+  this.service
+  .serviceGeneralGet('StockChicken/getFechaServidor')
+  .subscribe((resp) => {
+    if (resp.success) {
+      let fechaservidor:Date = new Date(resp.date.toString());
+      if(this.today.getDate() == fechaservidor.getDate() && this.today.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == this.today.getFullYear())
+        {
+          this.diferenciaFecha = false; 
+        } else{
+            let todaymenos:Date = new Date(this.today.getTime() - 30 * 60000); 
+            if(todaymenos.getDate() == fechaservidor.getDate() && todaymenos.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymenos.getFullYear())
+              {
+                this.diferenciaFecha = false; 
+              } else
+              {  
+                let todaymas:Date = new Date(this.today.getTime() + 30 * 60000); 
+                if(todaymas.getDate() == fechaservidor.getDate() && todaymas.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymas.getFullYear())
+                  {
+                    this.diferenciaFecha = false; 
+                  } else
+                  {
+                    this.diferenciaFecha = true;  alert("Configura correctame la fecha en tu dispositivo"); 
+                  }
+              }
+          }
+    }
+  });
 }
 
 }
