@@ -21,7 +21,7 @@ export class AppComponent {
       next: data => {
       },
       error: error => {
-        alert("Se perdió la conexión");
+        alert("Se perdió la conexión, válida tu conexión a internet");
         this.router.navigate(['/login']);
         setTimeout(() => {
           location.reload(); 
