@@ -50,6 +50,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public Inventario = [];
   public SemInv = false;
   public activoInv = 0;
+  public CapturaInv;
   public invMensual = false;
   public registro;
   public barProgressTask: number;
@@ -231,7 +232,30 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     }
   }
 
+  GetCapturaInventario(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetTipoInv?id_sucursal=${this.branchId}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('retorno: ', resp.result);
+          console.log('branch: ', this.branchId);
+          if(resp.result.idSucursal == this.branchId){
+              this.CapturaInv = 0;       
+          }
+          else{
+              this.CapturaInv = 1;  
+          }
+        }
+        
+        console.log('captura inv: ', this.CapturaInv);
+        
+
+      });
+      
+  }
+
   invMensualActivo(){
+    this.GetCapturaInventario();
     var Hrs = new Date().getHours();
     var ampm = Hrs >= 12 ? 'PM' : 'AM';
 
@@ -270,7 +294,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     }
     if(this.activoInv == 0){
       
-      if(ampm == "PM" && Hrs >= 22){
+      if(ampm == "PM" && Hrs >= 22 && this.CapturaInv == 1){
        this.SemInv = true;
       }
       else{

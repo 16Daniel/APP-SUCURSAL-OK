@@ -40,7 +40,9 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   public ValUsuario = 1;
   public activoInv = 0;
   public invMensual = false;
+  public SemInv = false;
   public Inventario;
+  public CapturaInv;
   public registro;
   public barProgressTask: number;
   public barProgressTask1: number;
@@ -63,19 +65,19 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
 
     console.log('viewwillenter');
-    //this.user = JSON.parse(localStorage.getItem('userData'));
+    this.user = JSON.parse(localStorage.getItem('userData'));
     //console.log('user', this.user);
     // obtener el nombre de sucursal
-    //this.branchId = this.user.branchId;
+    this.branchId = this.user.branchId;
     //this.task = this.routerActive.snapshot.paramMap.get(`idTarea`);
     // this.getBranch();
     //this.notificationVoladoEfectivo();
     this.getDataControl(this.task);
-    this.turnoActual();
+    /* this.turnoActual();
     this.invMensualActivo();
     this.audio.preload('alerta', 'assets/audio/1.mp3');
     this.getInventario();
-    this.GetRegistro();
+    this.GetRegistro(); */
 
   }
   ngOnInit() {
@@ -95,6 +97,16 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.stopaudioLoop();
   }
+
+  segundaCarga()
+  {
+    this.getInventario();
+    this.turnoActual();
+    this.invMensualActivo();
+    this.audio.preload('alerta', 'assets/audio/1.mp3');
+    this.GetRegistro();
+  }
+
   getDataControl(task) {
     this.load.presentLoading('Cargando..');
     
@@ -122,9 +134,13 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           console.log('control volado', this.completada);
           this.notificationVoladoEfectivo();
           this.load.dismiss();
+          this.segundaCarga(); 
         }
-        this.load.dismiss();
-        console.log('cant', this.cant);
+        else{this.load.dismiss();
+        }
+        
+        
+        
         
       });
     }
@@ -148,7 +164,10 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       console.log('reproduce timer'); }, 4000);
   }
   invMensualActivo(){
-    
+    this.GetCapturaInventario();
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+
     this.today = new Date();
     var tomorrow = new Date();
     var yesterday = new Date();
@@ -173,6 +192,22 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       this.activoInv = 0;
     }
     console.log('inv muestra: ', this.activoInv); 
+    }
+    if(this.activoInv == 0){
+      
+      if(ampm == "AM" && Hrs >= 7 && Hrs <= 11 && this.CapturaInv == 1){
+       this.SemInv = true;
+      }
+      else{
+
+        this.SemInv = false;
+        
+      
+      }
+      console.log('inventario status mat: ', this.SemInv);
+      console.log('ampm: ', ampm);
+      console.log('hrs: ', Hrs);
+      console.log('inventario cap: ', this.CapturaInv);
     }
   }
   
@@ -259,6 +294,28 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       this.ValUsuario = 1;
       }
     }
+  }
+
+  GetCapturaInventario(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetTipoInv?id_sucursal=${this.branchId}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('retorno: ', resp.result);
+          console.log('branch: ', this.branchId);
+          if(resp.result.idSucursal == this.branchId){
+              this.CapturaInv = 1;       
+          }
+          else{
+              this.CapturaInv = 0;  
+          }
+        }
+        
+        console.log('captura inv: ', this.CapturaInv);
+        
+
+      });
+      
   }
   
   GetRegistro(){
@@ -567,7 +624,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   getInventario() {
     this.load.present('Cargando inv..');
     this.service
-      .serviceGeneralGet(`StockChicken/GetStockM?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+      .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
         if (resp.success) {
           this.Inventario = resp.result;
@@ -580,7 +637,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
         else{this.load.dismiss();}
         console.log('s ',resp.success);
       });
-    console.log('sin data inventario');
+    console.log('sin data inventario mat');
   }
   
   showValidaTermina() {

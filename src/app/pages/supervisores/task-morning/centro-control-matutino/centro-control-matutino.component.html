@@ -667,42 +667,42 @@
           </ion-col>
 
 
-                    <!-- -----------STOCK DE POLLO------------ -->
-                    <!-- <ion-col size="6" *ngIf="data[4]"> -->
-                      <!-- aqui se envia el id de sucursal -->
-                      <!-- <ion-card (click)="stockPollo(user.branchId)">
-                        <ion-card-content>
-                          <ion-row size="12">
-                            <ion-col size="3" class="ion-align-self-center">
-                              <img *ngIf="this.Inventario.length !== 0" src="./assets/icon/ilustracion_stock_de_pollo.png" alt="" />
-                              <img *ngIf="this.Inventario.length === 0" src="./assets/icon/ilustracion_check.png" alt="" />
-                            </ion-col>
-                            <ion-col size="9">
-                              <ion-row size="12">
-                                <ion-col size="12">
-                                  <div>
-                                    <h3 class="title-tareas">INVENTARIO MAT</h3>
-                                  </div>
-                                </ion-col>
-                                <ion-col size="12">
-                                  <span class="title-progress-bar">NIVEL DE PROGRESO</span>
-                                  <br>
-                                  <ion-progress-bar *ngIf="this.Inventario.length !== 0" color="danger" value="0">
-                                  </ion-progress-bar>
-                                  <ion-progress-bar *ngIf="this.Inventario.length === 0" color="success"value="1">
-                                  </ion-progress-bar>
-                                  <br>
-                                  <div class="margin-completado">
-                                    <span *ngIf="this.Inventario.length !== 0" class="title-progress-bar">0% COMPLETADO</span>
-                                    <span *ngIf="this.Inventario.length === 0" class="title-progress-bar">100% COMPLETADO</span>
-                                  </div>
-                                </ion-col>
-                              </ion-row>
-                            </ion-col>
-                          </ion-row>
-                        </ion-card-content>
-                      </ion-card>
-                    </ion-col> -->
+<!-- -----------STOCK DE POLLO------------ -->
+<ion-col size="6" *ngIf="data[4] && this.SemInv === true">
+  <ion-card (click)="stockPollo(user.branchId)">
+    <ion-card-content>
+      <ion-row size="12">
+        <ion-col size="3" class="ion-align-self-center">
+          <img *ngIf="this.Inventario.length !== 0" src="./assets/icon/ilustracion_stock_de_pollo.png" alt="" />
+          <img *ngIf="this.Inventario.length === 0" src="./assets/icon/ilustracion_check.png" alt="" />
+        </ion-col>
+        <ion-col size="9">
+          <ion-row size="12">
+            <ion-col size="12">
+              <div>
+                <h3 class="title-tareas">INVENTARIO MAT</h3>
+              </div>
+            </ion-col>
+
+            <ion-col size="12">
+              <span class="title-progress-bar">NIVEL DE PROGRESO</span>
+              <br>
+              <ion-progress-bar *ngIf="this.Inventario.length !== 0" color="danger" value="0">
+              </ion-progress-bar>
+              <ion-progress-bar *ngIf="this.Inventario.length === 0" color="success"value="1">
+              </ion-progress-bar>
+              <br>
+              <div class="margin-completado">
+                <span *ngIf="this.Inventario.length !== 0" class="title-progress-bar">0% COMPLETADO</span>
+                <span *ngIf="this.Inventario.length === 0" class="title-progress-bar">100% COMPLETADO</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</ion-col>
           
 
          </ion-row>

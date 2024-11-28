@@ -23,11 +23,12 @@
         
         <ion-col size="11" class="ion-align-self-center">
           
-          <h3 class="title">INV. MAT</h3>
+          <h5 class="title fs-3 ms-1 fw-bold">INV. MAT</h5>
+          <h5 class="title fs-3 ms-1 fw-bold">V1.22</h5>
         </ion-col>
       </ion-row>
       <!-- titulo de empresa -->
-      <ion-row size="12" *ngIf="user" >
+      <ion-row size="12" *ngIf="user" id="dateInf">
         <ion-col size="9">
           <h5 class="subtitle-negro">{{user.branchName}}</h5>
         </ion-col>
@@ -41,16 +42,16 @@
   </ion-header>
   <ion-content fullscreen="false" class="ion-padding">
     <ion-grid>
-
+       
       <ion-row>
         <ion-col size="12" class="ion-align-self-center">
           <input [(ngModel)]="filtro" placeholder="Escribe para filtrar" class="i-filter">
           <button (click)="limpiarfiltro()" *ngIf="this.filtro !='' " class="btn-f">
-            Borrar filtro
+            BORRAR FILTRO
           </button>
         </ion-col>  
       </ion-row>
-
+     
       <ion-row size="12">
         <ion-col size="3" class="ion-align-self-center">
           <span>PRODUCTO:</span>
@@ -62,7 +63,7 @@
         </ion-col>
       </ion-row>
       <br>
-      <div *ngIf="data !== []">
+      <div *ngIf="data !== []" id="datosInv">
         <ion-row size="12" class="my-3" *ngFor="let item of filtrarDatos();  let i=index;">
 
           <ion-col size="3" class="ion-align-self-center">
@@ -84,7 +85,7 @@
             <ion-row size="12">
               <ion-col size="9" class="ion-align-self-center">
                 <ion-card class="closed">
-                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS" [disabled]="this.validado[i] === false">
+                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS"  disabled>
                   </ion-input>
                 </ion-card>
               </ion-col>
@@ -94,9 +95,15 @@
             </ion-row>
             <!-- <ion-label style="color: #ad182d; font-size: 12px" *ngIf="activeAmount">Campo requerido</ion-label> -->
           </ion-col>
-          <ion-col size="3" class="ion-align-self-center">
-            <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+          <ion-col size="3" class="ion-align-self-center" *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false" >
               Validar
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="1" class="ion-align-self-center"  *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="editarvalor(item,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+              <i class='bx bxs-edit bx-sm' ></i>
             </ion-button>
           </ion-col>
           <!-- <ion-col size="2" class="ion-align-self-center">
@@ -108,7 +115,7 @@
           </ion-col> -->
 
           <ion-col size="3" class="ion-align-self-center">
-            <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full" [disabled]="this.contador[i] !== 3 " *ngIf=" 3 >= this.contador[i]">
+            <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full" *ngIf=" 3 == this.contador[i]">
               Guardar
             </ion-button>
             <ion-button shape="rounded-pill" color="success" *ngIf="this.contador[i] > 3">SE GUARDO CORRECTAMENTE</ion-button>

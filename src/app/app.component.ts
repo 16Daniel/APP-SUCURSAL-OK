@@ -12,7 +12,7 @@ export class AppComponent {
   {
     setInterval(() => {
       // console.log("intervalo universal")
-      this.checkConnection(); 
+       this.checkConnection();  
     }, 10000);
   }
 
