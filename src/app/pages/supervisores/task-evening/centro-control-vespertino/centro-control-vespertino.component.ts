@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { AudioService } from 'src/app/services/audio.service';
 import { getDate } from 'date-fns';
+import { debug } from 'console';
 
 
 @Component({
@@ -68,6 +69,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   ) { }
 
   ionViewWillEnter() {
+    
     console.log('viewwillenter');
     //this.user = JSON.parse(localStorage.getItem('userData'));
     //console.log('user', this.user);
@@ -196,6 +198,100 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       else{
       this.ValUsuario = 1;
       }
+    }
+  }
+
+  GetCapturaInventario(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetTipoInv?id_sucursal=${this.branchId}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('retorno: ', resp.result);
+          console.log('branch: ', this.branchId);
+          if(resp.result.idSucursal == this.branchId){
+              this.CapturaInv = 0;       
+          }
+          else{
+              this.CapturaInv = 1;  
+          }
+        }
+        
+        console.log('captura inv: ', this.CapturaInv);
+        
+
+      });
+      
+  }
+
+  invMensualActivo(){
+    this.GetCapturaInventario();
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+
+    this.today = new Date();
+    var tomorrow = new Date();
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() -1);
+    tomorrow.setDate(tomorrow.getDate()+1);
+    var hoy = this.today.getDate();
+    var siguiente = tomorrow.getDate();
+    var ayer = yesterday.getDate();
+    this.getFechaServidor();                           //ANTES DE PUBLICAR DESCOMENTAR
+    console.log('ayer: ', ayer);
+    console.log('hoy: ', hoy); 
+    console.log('mañana: ', siguiente); 
+  //CAPTURA INVENTARIO DIA 2//if( hoy ==2 || siguiente==2){
+  //CAPTURA INVENTARIO DIA 1//if( hoy ==1 || siguiente==1){
+ 
+    if( hoy ==2 || siguiente==2){
+      var time = this.today.getHours();
+      if(ampm == "PM" && Hrs >= 22){
+        if ( time >= 22 && siguiente == 1) {
+          this.activoInv = 1;
+      
+        }
+
+      }
+      else{
+        if(Hrs <= 3 && hoy == 1){
+          this.activoInv = 1;
+        }
+        else{
+          this.activoInv = 0;
+        }
+        
+      }
+      console.log('inv muestra: ', this.activoInv); 
+    }
+    if(this.activoInv == 0){
+      if( hoy != 25 && hoy != 1){                                       //DESPUES COMENTAR
+        if(hoy == 18 ||  hoy == 31){                                    //DESPUES COMENTAR
+          if(ampm == "PM" && Hrs >= 16 && Hrs <= 18 && this.CapturaInv == 1){       //DESPUES COMENTAR
+            this.SemInv = true;                                         //DESPUES COMENTAR
+          }                                                             //DESPUES COMENTAR
+          else{                                                         //DESPUES COMENTAR
+            this.SemInv = false;                                        //DESPUES COMENTAR
+          }                                                             //DESPUES COMENTAR
+        }                                                               //DESPUES COMENTAR
+        else{                                                           //DESPUES COMENTAR
+          if(ampm == "PM" && Hrs >= 22 && this.CapturaInv == 1){
+            this.SemInv = true;
+           }
+           else{
+             if(Hrs <= 3){
+              this.SemInv = true;
+             }
+             else{
+             this.SemInv = false;
+             }
+           
+           }
+        }                                                                //DESPUES COMENTAR
+      }                                     //DESPUES COMENTAR
+      else{                                 //DESPUES COMENTAR
+        console.log('ES DIA: ', hoy);       //DESPUES COMENTAR
+        this.SemInv = false;                //DESPUES COMENTAR
+      }                                     //DESPUES COMENTAR
     }
   }
 
@@ -373,12 +469,41 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       
         console.log('Hora:', time);
         
-         
-        if ( time > 19 && time < 21) {
-          this.tunoCorre = 1;
-          this.alertFinal();
+        var hoy = this.today.getDate();
+        if(hoy == 18 || hoy == 31)                       //COMENTAR DESPUES
+        {
+          if ( time > 2 && time < 15) {
+            this.tunoCorre = 1;
+            this.alertFinal();
+          }
+          
+    
+          if (time > 14 && time <= 23) {
+              this.tunoCorre = 2;
+              
+            }
+            if(time >= 0 && time < 3) {
+              this.tunoCorre = 2;
+              
+            }
         }
-        
+        else{
+          if ( time > 2 && time < 17) {
+            this.tunoCorre = 1;
+            this.alertFinal();
+          }
+          
+    
+          if (time > 16 && time <= 23) {
+              this.tunoCorre = 2;
+              
+            }
+            if(time >= 0 && time < 3) {
+              this.tunoCorre = 2;
+              
+            }
+        }
+
   
     }
 

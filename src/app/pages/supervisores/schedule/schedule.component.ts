@@ -77,34 +77,66 @@ export class ScheduleComponent implements OnInit {
     this.today = new Date();
     var time = this.today.getHours();
     this.tunoCorre = 0;
-    if (this.tunoCorre == 0) {
-      console.log('Hora:', time);
-      
-       
-      if ( time > 6 && time < 17) {
-        this.tunoCorre = 1;
-        console.log('Turno', this.tunoCorre);
-      }
-      
-
-      if (time > 16 && time <= 23) {
-          this.tunoCorre = 2;
+    var hoy = this.today.getDate();
+    if(hoy == 18 || hoy == 31){                        //COMENTAR DESPUES
+      if (this.tunoCorre == 0) {
+        console.log('Hora:', time);
+        
+         
+        if ( time >= 3 && time < 15) {
+          this.tunoCorre = 1;
           console.log('Turno', this.tunoCorre);
         }
-        if(time >= 0 && time < 3) {
-          this.tunoCorre = 2;
-          console.log('Turno', this.tunoCorre);
+        
+  
+        if (time > 14 && time <= 23) {
+            this.tunoCorre = 2;
+            console.log('Turno', this.tunoCorre);
+          }
+          if(time >= 0 && time < 3) {
+            this.tunoCorre = 2;
+            console.log('Turno', this.tunoCorre);
+          }
+        
+        if(this.tunoCorre == 0){
+         
+          this.stopTimer()
+          this.router.navigateByUrl('login');
+          localStorage.removeItem('userData');
+  
         }
-      
-      if(this.tunoCorre == 0){
-       
-        this.stopTimer()
-        this.router.navigateByUrl('login');
-        localStorage.removeItem('userData');
-
       }
-      
     }
+    else{                                              //COMENTAR DESPUES
+      if (this.tunoCorre == 0) {
+        console.log('Hora:', time);
+        
+         
+        if ( time >= 3 && time < 17) {
+          this.tunoCorre = 1;
+          console.log('Turno', this.tunoCorre);
+        }
+        
+  
+        if (time > 16 && time <= 23) {
+            this.tunoCorre = 2;
+            console.log('Turno', this.tunoCorre);
+          }
+          if(time >= 0 && time < 3) {
+            this.tunoCorre = 2;
+            console.log('Turno', this.tunoCorre);
+          }
+        
+        if(this.tunoCorre == 0){
+         
+          this.stopTimer()
+          this.router.navigateByUrl('login');
+          localStorage.removeItem('userData');
+  
+        }
+      }
+      
+    }                                                   //COMENTAR DESPUES
 
     
   }

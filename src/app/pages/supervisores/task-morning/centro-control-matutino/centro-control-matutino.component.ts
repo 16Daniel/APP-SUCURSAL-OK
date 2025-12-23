@@ -141,6 +141,60 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       this.audio.play('alerta');
       console.log('reproduce timer'); }, 4000);
   }
+  invMensualActivo(){
+    this.GetCapturaInventario();
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+
+    this.today = new Date();
+    var tomorrow = new Date();
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() -1);
+    tomorrow.setDate(tomorrow.getDate()+1);
+    var hoy = this.today.getDate();
+    var siguiente = tomorrow.getDate();
+    var ayer = yesterday.getDate();
+    this.getFechaServidor();                           //ANTES DE PUBLICAR DESCOMENTAR    
+    console.log('ayer: ', ayer);
+    console.log('hoy: ', hoy); 
+    console.log('mañana: ', siguiente); 
+
+    //INVENTARIO DIA 1//if(hoy ==1 ){
+    //INVENTARIO DIA 2//if(hoy ==2 ){
+    if(hoy ==2 ){
+    var time = this.today.getHours();
+    if ( time < 13 && time >=3) {
+      this.activoInv = 1;
+      
+    }
+    else{
+      
+      this.activoInv = 0;
+    }
+    console.log('inv muestra: ', this.activoInv); 
+    }
+    if(this.activoInv == 0){
+      if( hoy != 25 && hoy != 1){ 
+      if(ampm == "AM" && Hrs >= 7 && Hrs <= 11 && this.CapturaInv == 1){
+       this.SemInv = true;
+      }
+      else{
+
+        this.SemInv = false;
+        
+      
+      }
+    }                                     //DESPUES COMENTAR
+    else{                                 //DESPUES COMENTAR
+      console.log('ES DIA: ', hoy);       //DESPUES COMENTAR
+      this.SemInv = false;                //DESPUES COMENTAR
+    }                                     //DESPUES COMENTAR
+      console.log('inventario status mat: ', this.SemInv);
+      console.log('ampm: ', ampm);
+      console.log('hrs: ', Hrs);
+      console.log('inventario cap: ', this.CapturaInv);
+    }
+  }
   
   stopTimer() {
     
@@ -193,21 +247,40 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     
       console.log('Hora:', time);
       
-       
-      if ( time > 6 && time < 17) {
-        this.tunoCorre = 1;
+      var hoy = this.today.getDate();
+      if(hoy == 24 || hoy == 31)                       //COMENTAR DESPUES
+      {                                                //COMENTAR DESPUES
+        if ( time > 2 && time < 15) {
+          this.tunoCorre = 1;
+          
+        }
         
-      }
-      
-
-      if (time > 16 && time <= 23) {
-          this.tunoCorre = 2;
-          this.alertFinal();
+  
+        if (time > 14 && time <= 23) {
+            this.tunoCorre = 2;
+            this.alertFinal();
+          }
+          if(time >= 0 && time < 3) {
+            this.tunoCorre = 2;
+            this.alertFinal();
+          }
+      }                                               //COMENTAR DESPUES
+      else{                                           //COMENTAR DESPUES
+        if ( time > 2 && time < 17) {
+          this.tunoCorre = 1;
+          
         }
-        if(time >= 0 && time < 3) {
-          this.tunoCorre = 2;
-          this.alertFinal();
-        }
+        
+  
+        if (time > 16 && time <= 23) {
+            this.tunoCorre = 2;
+            this.alertFinal();
+          }
+          if(time >= 0 && time < 3) {
+            this.tunoCorre = 2;
+            this.alertFinal();
+          }
+      }                                                //COMENTAR DESPUES
 
         if(this.tunoCorre == 0){
           this.alertFinal();
@@ -228,7 +301,75 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  GetCapturaInventario(){
+    var hoy = this.today.getDate();                                                //COMENTAR DESPUES
+
+    if(hoy == 26 ){                                                //COMENTAR DESPUES
+      this.CapturaInv = 1;  
+    }                                                  //COMENTAR DESPUES
+    else{                                                //COMENTAR DESPUES
+    this.service
+      .serviceGeneralGet(`StockChicken/GetTipoInv?id_sucursal=${this.branchId}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('retorno: ', resp.result);
+          console.log('branch: ', this.branchId);
+          if(resp.result.idSucursal == this.branchId){
+              this.CapturaInv = 1;       
+          }
+          else{
+              this.CapturaInv = 0;  
+          }
+        }
+        
+        console.log('captura inv: ', this.CapturaInv);
+        
+
+      });
+    }                                                //COMENTAR DESPUES
+      
+  }
   
+  GetRegistro(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetRegistro?id_sucursal=${this.user.branch}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.registro = resp.result;
+          if(this.registro.id != 0 ){
+            if(this.registro.procesado == false){
+            console.log('con registro pendiente',this.registro);
+            
+            this.invMensual = true;
+            }
+            else{
+              console.log('registro procesado',this.registro);
+              this.invMensual = true;
+              const fecha1= new Date();
+              const fecha2= new Date(this.registro.dateCaptura);
+
+              
+              var diasdif= fecha1.getTime() - fecha2.getTime();
+	            var contdias = Math.round(diasdif/(1000*60*60*24));
+              console.log('diff: ',contdias);
+              if(contdias < 10){
+                this.invMensual = false;
+              }
+            }
+          }
+          else{
+            this.invMensual = true;
+            console.log('sin registro pendiente');
+          }
+        
+        }
+        else{
+          console.log('sin registro');
+        }
+      });
+      console.log('invMensual: ', this.invMensual);
+  }
 
   async alertFinal(){
     this.stopTimer();
