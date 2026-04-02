@@ -155,6 +155,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     var siguiente = tomorrow.getDate();
     var ayer = yesterday.getDate();
     this.getFechaServidor();                           //ANTES DE PUBLICAR DESCOMENTAR    
+    this.getFechaServidor();             ///DESCOMENTAR ANTES DE PUBLICAR
     console.log('ayer: ', ayer);
     console.log('hoy: ', hoy); 
     console.log('mañana: ', siguiente); 
@@ -162,6 +163,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     //INVENTARIO DIA 1//if(hoy ==1 ){
     //INVENTARIO DIA 2//if(hoy ==2 ){
     if(hoy ==2 ){
+    if(hoy == 1 ){
     var time = this.today.getHours();
     if ( time < 13 && time >=3) {
       this.activoInv = 1;
@@ -173,6 +175,18 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     }
     console.log('inv muestra: ', this.activoInv); 
     }
+    else{                                            ////
+      if(siguiente == 1){                            ////
+        var time = this.today.getHours();            ////
+        if ( time < 17 && time >=15) {               ////
+         this.activoInv = 1;                         ////
+        }                                            ////  COMENTAR DESPUES DEL DIA 31 DIC 2025
+        else{                                        ////
+          this.activoInv = 0;                        ////
+        }                                            ////
+      }                                              ////
+      console.log('inv muestra: ', this.activoInv);  ////
+    }                                                ////
     if(this.activoInv == 0){
       if( hoy != 25 && hoy != 1){ 
       if(ampm == "AM" && Hrs >= 7 && Hrs <= 11 && this.CapturaInv == 1){

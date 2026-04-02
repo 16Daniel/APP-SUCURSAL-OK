@@ -237,6 +237,7 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
     var siguiente = tomorrow.getDate();
     var ayer = yesterday.getDate();
     this.getFechaServidor();                           //ANTES DE PUBLICAR DESCOMENTAR
+    this.getFechaServidor();     ///DESCOMENTAR ANTES DE PUBLICAR
     console.log('ayer: ', ayer);
     console.log('hoy: ', hoy); 
     console.log('mañana: ', siguiente); 
@@ -247,6 +248,12 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       var time = this.today.getHours();
       if(ampm == "PM" && Hrs >= 22){
         if ( time >= 22 && siguiente == 1) {
+      /* if(ampm == "PM" && Hrs >= 22){              //// DESCOMENTAR DESPUES DEL 31 DIC 2025
+        if ( time >= 22 && siguiente == 1) {      //// DESCOMENTAR DESPUES DEL 31 DIC 2025 */
+
+      if(ampm == "PM" && Hrs >= 17){              //// COMENTAR DESPUES DEL 31 DIC 2025
+        if ( time >= 17 && siguiente == 1) {      //// COMENTAR DESPUES DEL 31 DIC 2025
+      
           this.activoInv = 1;
       
         }
