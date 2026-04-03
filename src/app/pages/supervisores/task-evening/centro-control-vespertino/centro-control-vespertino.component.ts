@@ -58,6 +58,8 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
   public color: string;
   public diferenciaFecha:boolean = false; 
 
+  public InventarioArtsem:any[] = [];
+  public invartsem:boolean = false; 
   constructor(
     public router: Router,
     public service: ServiceGeneralService,
@@ -296,16 +298,19 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       
       if(ampm == "PM" && Hrs >= 22 && this.CapturaInv == 1){
        this.SemInv = true;
+       this.invartsem = this.today.getDay() == 6; 
       }
       else{
         if(Hrs <= 3){
          this.SemInv = true;
+         this.invartsem = this.today.getDay() == 0; 
         }
         else{
         this.SemInv = false;
         }
       
       }
+      
     }
   }
 
@@ -685,6 +690,26 @@ getInventario() {
   console.log('sin data inventario');
 }
 
+getInventarioArtSem() {
+  this.load2.present('Cargando inv..');
+  this.service
+    .serviceGeneralGet(`StockChicken/GetStockArtSemV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+    .subscribe((resp) => {
+      if (resp.success) {
+        this.InventarioArtsem = resp.result;
+        this.InventarioArtsem.forEach(element => {
+          element.cantidad = 0;
+        });
+        console.log("objetos inv: ",this.Inventario.length);
+       this.load2.dismiss();
+      }
+      else{this.load2.dismiss();
+        }
+      console.log('s ',resp.success);
+    });
+  console.log('sin data inventario');
+}
+
 segundaCarga()
 {
   this.getInventario();
@@ -692,6 +717,7 @@ segundaCarga()
   this.invMensualActivo();
   this.audio.preload('alerta', 'assets/audio/1.mp3');
   this.GetRegistro();
+  this.getInventarioArtSem(); 
 }
 
 validacionAsistencia() {
@@ -842,6 +868,17 @@ stockPollo(id: number) {
     }
     this.stopTimer();
     this.router.navigateByUrl('supervisor/inventario-semanal/2/' + id+'/'+this.ValUsuario);
+    
+  }
+}
+
+stockPolloartSem(id: number) {
+  if(this.InventarioArtsem.length != 0){
+    if (id === null) {
+      id = 0;
+    }
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/inventario-art-semanal/2/' + id+'/'+this.ValUsuario);
     
   }
 }

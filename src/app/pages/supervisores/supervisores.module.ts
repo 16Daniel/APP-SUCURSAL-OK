@@ -45,6 +45,8 @@ import { InventarioMensualComponent } from './task-otros/inventario-mensual/inve
 import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { InventarioArtSemanalComponent } from './task-evening/inventario-art-semanal/inventario-art-semanal.component';
+import { InventarioArtSemanalMatComponent } from './task-morning/inventario-art-semanal-mat/inventario-art-semanal-mat.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     C25ptsComponent,
     InventarioMensualComponent,
     InventarioRegularizaComponent,
+    InventarioArtSemanalComponent,
+    InventarioArtSemanalMatComponent
   ],
   imports: [
     CommonModule,
