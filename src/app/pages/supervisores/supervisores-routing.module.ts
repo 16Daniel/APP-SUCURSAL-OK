@@ -24,6 +24,8 @@ import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiem
 import { C25ptsComponent } from './graficas/c25pts/c25pts.component';
 import { InventarioMensualComponent } from './task-otros/inventario-mensual/inventario-mensual.component';
 import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
+import { InventarioArtSemanalComponent } from './task-evening/inventario-art-semanal/inventario-art-semanal.component';
+import { InventarioArtSemanalMatComponent } from './task-morning/inventario-art-semanal-mat/inventario-art-semanal-mat.component';
 const routes: Routes = [
   {
     path: '',
@@ -120,7 +122,15 @@ const routes: Routes = [
   {
     path: 'c25pts/:turno/:us',
     component: C25ptsComponent,
-  }
+  },
+  {
+    path: 'inventario-art-semanal-mat/:turno/:id/:us',
+    component: InventarioArtSemanalMatComponent,
+  },
+   {
+    path: 'inventario-art-semanal/:turno/:id/:us',
+    component: InventarioArtSemanalComponent,
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

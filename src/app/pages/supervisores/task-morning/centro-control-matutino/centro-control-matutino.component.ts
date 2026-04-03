@@ -47,7 +47,11 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   public barProgressTask: number;
   public barProgressTask1: number;
   public color: string;
-  public diferenciaFecha:boolean = false; 
+  public diferenciaFecha:boolean = false;
+  public invartsem:boolean = false; 
+  
+  public inventarioArtSem:any[] = []; 
+  
   constructor(
     public router: Router,public routerActive: ActivatedRoute,
     public service: ServiceGeneralService,
@@ -105,6 +109,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.invMensualActivo();
     this.audio.preload('alerta', 'assets/audio/1.mp3');
     this.GetRegistro();
+    this.getInventarioArtSemMat(); 
   }
 
   getDataControl(task) {
@@ -197,6 +202,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       
       if(ampm == "AM" && Hrs >= 7 && Hrs <= 11 && this.CapturaInv == 1){
        this.SemInv = true;
+       this.invartsem = this.today.getDay() == 0;
       }
       else{
 
@@ -631,8 +637,8 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           this.Inventario.forEach(element => {
             element.cantidad = 0;
           });
-          console.log("objetos inv: ",this.Inventario.length);
           this.load.dismiss();
+          console.log("objetos inv: ",this.Inventario.length);
         }
         else{this.load.dismiss();}
         console.log('s ',resp.success);
@@ -640,6 +646,24 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     console.log('sin data inventario mat');
   }
   
+    getInventarioArtSemMat() {
+    this.load.present('Cargando inv..');
+    this.service
+      .serviceGeneralGet(`StockChicken/GetStockArtSemMat?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.inventarioArtSem = resp.result;
+          this.inventarioArtSem.forEach(element => {
+            element.cantidad = 0;
+          });
+          this.load.dismiss();
+        }
+        else{this.load.dismiss();}
+        console.log('s ',resp.success);
+      });
+    console.log('sin data inventario mat');
+  }
+
   showValidaTermina() {
     this.alertController.create({
       cssClass: 'custom-alert',
@@ -777,6 +801,16 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       }
       this.stopTimer();
       this.router.navigateByUrl('supervisor/expectativa-venta/1/' + id+'/'+this.ValUsuario);
+    }
+  }
+
+    stockPolloartSem(id: number) {
+    if(this.inventarioArtSem.length != 0){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl('supervisor/inventario-art-semanal-mat/1/' + id+'/'+this.ValUsuario);
     }
   }
   graficaTiempos() {

@@ -1,0 +1,439 @@
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Router, ActivatedRoute, Data } from '@angular/router';
+import { ModalController } from '@ionic/angular';
+import { ServiceGeneralService } from 'src/app/core/services/service-general/service-general.service';
+import { DialogAddPackageComponent } from '../../dialog/dialog-add-package/dialog-add-package.component';
+import { LoaderComponent } from 'src/app/pages/dialog-general/loader/loader.component';
+import { DialogUpdateStockPolloComponent } from '../../dialog/dialog-update-stock-pollo/dialog-update-stock-pollo.component';
+import { AlertController } from '@ionic/angular';
+import { DatePipe, formatNumber } from '@angular/common';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ModalCalculoInventarioComponent } from 'src/app/pages/shared/modal-calculo-inventario/modal-calculo-inventario.component';
+import { param } from 'jquery';
+
+@Component({
+  selector: 'app-inventario-art-semanal',
+  templateUrl: './inventario-art-semanal.component.html',
+  styleUrls: ['./inventario-art-semanal.component.scss'],
+})
+export class InventarioArtSemanalComponent implements OnInit {
+
+  public today = new Date();
+  public user: any;
+  public idSucursal: string;
+  public disabled = false;
+  public createDate = '';
+  public data;
+  public turno;
+  public dataInv: InvModel = new InvModel();
+  public validado : boolean[] = [];
+  public contador: number[] = [];
+  public strikes: number[] = [];
+  handlerRespMessage = '';
+  handlerRespValor;
+  recarga = 0;
+  filtro: string = '';
+  public ubicacionesinv:UbicacionInvModel[] = []; 
+
+  constructor(
+    public router: Router,
+    public modalController: ModalController,
+    public routerActive: ActivatedRoute,
+    public service: ServiceGeneralService,
+    public load: LoaderComponent,
+    public alertController: AlertController,
+    public datepipe: DatePipe,
+
+  ) { }
+  ionViewWillEnter() {
+    this.user = JSON.parse(localStorage.getItem('userData'));
+    console.log(this.routerActive.snapshot.paramMap.get('id'));
+    this.idSucursal = this.routerActive.snapshot.paramMap.get('id');
+    this.turno = this.routerActive.snapshot.paramMap.get('turno');
+   // this.getData();
+    console.log('user: ', this.user);
+    console.log('ionview ');
+    this.getDataInventario();
+
+    
+  }
+  ngOnInit() 
+  {
+    
+   }
+  
+  validaO(i){
+     if(this.contador[i] >= 3 ){
+          this.validado[i]= false;
+     }
+     else{
+      this.validado[i]= true;
+     }
+
+  }
+  
+  getData() {
+    this.load.present('Cargando..'); 
+    this.service
+      .serviceGeneralGet(`StockChicken/GetStockArtSemV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.data = resp.result;
+          // Función de comparación personalizada
+          const compararPorOrdenamiento = (a, b) => a.orden - b.orden;
+
+          // Aplicar la ordenación al array
+          this.data.sort(compararPorOrdenamiento);
+          this.data.forEach(element => {
+
+          let dataf = this.ubicacionesinv.filter(x=> x.codart == element.codarticulo && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+              if(dataf.length>0)
+                {
+                  element.cantidad = dataf[0].total;
+                }else
+                {
+                  element.cantidad = 0;
+                }
+            
+          });
+          console.log('data: ',this.data.length);
+          console.log('data: ',this.data);
+          this.load.dismiss(); 
+        }
+        console.log('s ',resp.success);
+      });
+    console.log('sin data');
+    
+  }
+
+
+  getDataInventario() {
+    this.load.presentLoading('Cargando..');
+    this.service
+      .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+      .subscribe((resp) => {
+        this.ubicacionesinv =resp; 
+        this.getData();    
+      });
+    
+  }
+
+
+  return() {
+    // window.history.back();
+    if (this.turno === '1') {
+      this.router.navigateByUrl('supervisor/control-matutino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
+    }
+    else {
+      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
+    }
+  }
+
+
+  async addPackage(idPack: number) {
+    console.log('id paquete', idPack);
+    // package = 0 es nuevo registos, si es != 0 es update
+    const modal = await this.modalController.create({
+      component: DialogAddPackageComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        idSucursal: this.idSucursal, //se envia el id de sucursal
+        idPackage: idPack,
+      },
+    });
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+      this.ionViewWillEnter();
+    });
+    this.modalController.dismiss();
+    return await modal.present();
+  }
+  deletePackage(id: number) {
+    this.service
+      .serviceGeneralDelete('StockChicken/' + id)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('delete success', resp);
+          this.load.presentLoading('Eliminando paquete..');
+          this.ionViewWillEnter();
+        }
+      });
+  }
+  save(item,i) {
+    this.service
+      .serviceGeneralPostWithUrl(`StockChicken/AddRegularizateV?codArticulo=${item.codarticulo}&codAlmacen=${item.codalmacen}&cantidad=${item.cantidad}&dataBase=${this.user.dataBase}`, ``)
+      .subscribe((resp) => {
+        console.log(resp);
+
+        if (resp.success) {
+          this.eliminarUbicacionesInv(item.codarticulo);
+          this.load.presentLoading('Cantidad Permitida');
+          this.presentAlert(i);
+          // this.data.status = 'post';
+          this.addInv(item,i);
+        }
+        else{
+          location.reload();
+        }
+      });
+    
+  }
+
+  addInv(item,i) {
+    this.formartDate();
+    this.dataInv.branch = this.user.branch;
+    this.dataInv.invInicial = item.cantidad - item.diferencia;
+    this.dataInv.invReg = item.cantidad;
+    this.dataInv.diferencia = item.diferencia;
+    this.dataInv.intentos = this.strikes[i];
+    this.dataInv.articulo = item.descripcion;
+    this.dataInv.createdBy = this.user.id;
+    this.dataInv.createdDate = this.createDate;
+    this.dataInv.updatedBy = this.user.id;
+    this.dataInv.updatedDate = this.createDate;
+    console.log('Obj To send  post=> ', this.dataInv);
+    
+
+    this.service
+      .serviceGeneralPostWithUrl('Inventario', this.dataInv)
+      .subscribe((data) => {
+        if (data.success) {
+          
+          console.log('data inventario:', data);
+          this.load.dismiss();
+        }
+        else{
+          this.load.dismiss();
+          location.reload();
+        }
+      });
+      
+  }
+
+  formartDate() {
+    // 2022-03-11T17:27:00
+    console.log('date', this.today);
+    let time = '';
+    const hour = this.today.getHours();
+    const minute = this.today.getMinutes();
+    let hourString = hour.toString();
+    let minuteString = minute.toString();
+    const date = this.datepipe.transform(this.today, 'yyyy-MM-dd');
+    if (hourString.length < 2) {
+      hourString = `0${hourString}`;
+    }
+    if (minuteString.length < 2) {
+      minuteString = `0${minuteString}`;
+    }
+    console.log('hour', hourString);
+    console.log('minute', minuteString);
+    time = `${hourString}:${minuteString}:00`;
+    console.log('date', date);
+    this.createDate = `${date}T${time}`;
+  }
+
+  async validarCantidad(stock, i) {
+    let respValidar;
+    console.log('info de validar', stock);
+    // this.load.presentLoading('Validando..');
+    this.service
+      .serviceGeneralGet(`StockChicken/ValidateStockArtSemV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}&cantidad=${stock.cantidad}&codarticulo=${stock.codarticulo}`)
+      .subscribe((resp) => {
+        respValidar = resp;
+        console.log('validar', respValidar);
+        if (resp.success) {
+          // stock.diferencia
+          stock.diferencia = respValidar.message;
+          
+          stock.invInicial = (Number(respValidar.message) - Number(stock.cantidad))* -1;
+          console.log('stock inicial',stock.invInicial);
+
+          this.openDialogValidarStock(stock,i);
+          console.log('new valor permitida', stock);
+          
+        }
+        else {
+          
+          stock.diferencia = respValidar.message;
+          stock.invInicial = (Number(respValidar.message) - Number(stock.cantidad))* -1;
+          console.log('stock inicial',stock.invInicial);
+
+          console.log('no hay diferencia', stock);
+          this.contador[i] = 3;
+          if(isNaN(this.strikes[i])){this.strikes[i] = 1;}
+          else{this.strikes[i] += 1;}
+          
+          console.log('cont', this.contador[i]);
+          console.log('st', this.strikes[i]);
+          this.validaO(i);
+        }
+      });
+    console.log('sin data');
+  }
+  async openDialogValidarStock(nodo,i) {
+    if(isNaN(this.contador[i])){
+      this.contador[i] = 1;
+      
+    }
+    else{
+    this.contador[i] += 1;
+    
+    }
+    if(isNaN(this.strikes[i])){this.strikes[i] = 1;}
+          else{this.strikes[i] += 1;}
+    console.log('contador: ', this.contador[i]);
+    console.log('st', this.strikes[i]);
+    this.validaO(i);
+    
+    if(this.contador[i] < 3){
+    const alert = await this.alertController.create({
+      cssClass: 'custom-alert',
+      header: 'DIFERENCIA DE STOCK',
+      // subHeader: `De: ${nodo.diferencia}`,
+      message: 'HAY UNA DIFERENCIA EN EL STOCK Y TU CONTEO: <BR><br>1.- CUENTA NUEVAMENTE TU STOCK <BR>2.-REVISA QUE TODAS TUS COMPRAS ESTEN CARGADAS EN EL SISTEMAS <BR>3.-REVISA QUE TUS MERMAS ESTEN CARGADAS CORRECTAMENTE',
+      mode: 'ios', //sirve para tomar el diseño de ios
+      buttons: [
+        // {
+        //   text: 'Cancelar',
+        //   role: 'cancel',
+        //   handler: () => { this.handlerRespMessage = 'Alert canceled'; }
+        // },
+        {
+          text: 'OK',
+          role: 'confirm',
+          handler: () => { this.handlerRespMessage = 'Alert confirmed'; }
+          
+        }
+      ]
+    });
+
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    this.handlerRespValor = role;
+    console.log('onDidDismiss resolved with role', this.handlerRespValor);
+  }
+
+  }
+  trackData(index, data) {
+    return data ? data.id : undefined;
+  }
+
+
+  async presentAlert(i) {
+    const alert = await this.alertController.create({
+      cssClass: 'custom-alert',
+      header: 'IMPORTANTE',
+      subHeader: 'INVENTARIO',
+      message: 'SE REALIZO EL AJUSTE DE INVENTARIO CON EXITO. <BR>RECUERDA REINICIAR TU SISTEMA FRONTREST PARA QUE RECIBA EL AJUSTE.',
+      mode: 'ios',
+      buttons: ['OK'],
+    });
+  
+
+    await alert.present();
+      const { role } = await alert.onDidDismiss();
+      console.log('onDidDismiss resolved with role', role);
+      this.contador[i] += 1;
+      this.validaO(i);
+  }
+  
+  filtrarDatos() {
+    if(this.filtro == '')
+    {
+      return this.data
+    } else
+    {
+      return this.data.filter(item => item.descripcion.toUpperCase().includes(this.filtro.toUpperCase()));
+    } 
+  }
+
+  limpiarfiltro()
+  {
+    this.filtro = '';
+    this.filtrarDatos(); 
+  }
+
+async editarvalor(item:any,ida:number, codart:number,i:number)
+{
+   let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  const modal = await this.modalController.create({
+    component: ModalCalculoInventarioComponent,
+    componentProps: {
+      param1: item.descripcion,
+      param2: ida,
+      param3: dataf,
+      vista: 1
+    }
+  });
+  await modal.present();
+
+  const { data } = await modal.onWillDismiss();
+  if(data.guardado)
+    {
+      if(dataf.length==0)
+        {
+          this.service
+          .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+          .subscribe((resp) => {
+            this.ubicacionesinv =resp;   
+            item.cantidad = data.total; 
+          });
+        } else
+        {
+          item.cantidad = data.total; 
+            dataf[0].jdata = data.arr; 
+          dataf[0].total = data.total; 
+        }
+    
+     
+    }
+}
+
+eliminarUbicacionesInv(codart:number)
+{
+  
+  let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  
+  if(dataf.length>0)
+    {
+      this.service
+      .serviceGeneralGet(`StockChicken/EliminarUbicacionesInventario/${dataf[0].id}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          
+        }
+      });
+    }
+
+}
+
+}
+class InvModel {
+  id: number;
+  branch: number;
+  invInicial: number;
+  invReg: number;
+  diferencia: number;
+  intentos: number;
+  articulo: string;
+  createdBy: number;
+  createdDate: String;
+  updatedBy: number;
+  updatedDate: String;
+}
+ class UbicacionInvModel
+ {
+  id:number;
+  codart: number;
+  jdata: string;
+  idu:string;
+  ids:string;
+  vista:number;
+  total:number
+ }
