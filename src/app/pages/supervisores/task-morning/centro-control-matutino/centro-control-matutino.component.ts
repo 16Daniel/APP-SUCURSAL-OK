@@ -628,7 +628,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   }
 
   getInventario() {
-    this.load.present('Cargando inv..');
+    this.load.present('Cargando Inv Diario..');
     this.service
       .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
@@ -638,7 +638,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
             element.cantidad = 0;
           });
           this.load.dismiss();
-          console.log("objetos inv: ",this.Inventario.length);
+          console.log("objetos inv diarios: ",this.Inventario.length);
         }
         else{this.load.dismiss();}
         console.log('s ',resp.success);
@@ -647,7 +647,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   }
   
     getInventarioArtSemMat() {
-    this.load.present('Cargando inv..');
+    //this.load.present('Cargando Inv Semanal..');
     this.service
       .serviceGeneralGet(`StockChicken/GetStockArtSemMat?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
@@ -656,9 +656,11 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           this.inventarioArtSem.forEach(element => {
             element.cantidad = 0;
           });
-          this.load.dismiss();
+          //this.load.dismiss();
+          console.log("objetos inv semanal: ",this.inventarioArtSem.length);
         }
-        else{this.load.dismiss();}
+        else{//this.load.dismiss();
+          }
         console.log('s ',resp.success);
       });
     console.log('sin data inventario mat');
