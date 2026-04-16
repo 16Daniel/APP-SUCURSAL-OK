@@ -299,11 +299,19 @@ export class CentroControlVespertinoComponent implements OnInit, OnDestroy  {
       if(ampm == "PM" && Hrs >= 22 && this.CapturaInv == 1){
        this.SemInv = true;
        this.invartsem = this.today.getDay() == 6; 
+       if(this.invartsem)
+        {
+          this.getInventarioArtSem()
+        }
       }
       else{
         if(Hrs <= 3){
          this.SemInv = true;
-         this.invartsem = this.today.getDay() == 0; 
+         this.invartsem = this.today.getDay() == 0;
+          if(this.invartsem)
+        {
+          this.getInventarioArtSem()
+        }
         }
         else{
         this.SemInv = false;
@@ -691,7 +699,6 @@ getInventario() {
 }
 
 getInventarioArtSem() {
-  this.load2.present('Cargando inv..');
   this.service
     .serviceGeneralGet(`StockChicken/GetStockArtSemV?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
     .subscribe((resp) => {
@@ -700,11 +707,8 @@ getInventarioArtSem() {
         this.InventarioArtsem.forEach(element => {
           element.cantidad = 0;
         });
-        console.log("objetos inv: ",this.Inventario.length);
-       this.load2.dismiss();
+        console.log("objetos inv semanal: ",this.Inventario.length);
       }
-      else{this.load2.dismiss();
-        }
       console.log('s ',resp.success);
     });
   console.log('sin data inventario');
@@ -717,7 +721,7 @@ segundaCarga()
   this.invMensualActivo();
   this.audio.preload('alerta', 'assets/audio/1.mp3');
   this.GetRegistro();
-  this.getInventarioArtSem(); 
+ 
 }
 
 validacionAsistencia() {
