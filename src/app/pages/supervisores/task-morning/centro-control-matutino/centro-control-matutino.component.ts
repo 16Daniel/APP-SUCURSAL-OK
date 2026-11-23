@@ -38,12 +38,20 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   public contador1 = null;
   public tunoCorre = 0;
   public ValUsuario = 1;
-
+  public activoInv = 0;
+  public invMensual = false;
+  public SemInv = false;
   public Inventario;
-
+  public CapturaInv;
+  public registro;
   public barProgressTask: number;
   public barProgressTask1: number;
   public color: string;
+  public diferenciaFecha:boolean = false;
+  public invartsem:boolean = false; 
+  
+  public inventarioArtSem:any[] = []; 
+  
   constructor(
     public router: Router,public routerActive: ActivatedRoute,
     public service: ServiceGeneralService,
@@ -61,22 +69,19 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
 
     console.log('viewwillenter');
-    //this.user = JSON.parse(localStorage.getItem('userData'));
+    this.user = JSON.parse(localStorage.getItem('userData'));
     //console.log('user', this.user);
     // obtener el nombre de sucursal
-    //this.branchId = this.user.branchId;
+    this.branchId = this.user.branchId;
     //this.task = this.routerActive.snapshot.paramMap.get(`idTarea`);
     // this.getBranch();
     //this.notificationVoladoEfectivo();
     this.getDataControl(this.task);
-    this.turnoActual();
+    /* this.turnoActual();
+    this.invMensualActivo();
     this.audio.preload('alerta', 'assets/audio/1.mp3');
     this.getInventario();
-  
-
- 
-
-
+    this.GetRegistro(); */
 
   }
   ngOnInit() {
@@ -91,12 +96,26 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.startTimer();
    
   }
+  
   ngOnDestroy() {
     this.stopTimer();
     this.stopaudioLoop();
   }
+
+  segundaCarga()
+  {
+    this.getInventario();
+    this.turnoActual();
+    this.invMensualActivo();
+    this.audio.preload('alerta', 'assets/audio/1.mp3');
+    this.GetRegistro();
+    this.getInventarioArtSemMat(); 
+  }
+
   getDataControl(task) {
     this.load.presentLoading('Cargando..');
+    
+    if(task != 3){
     this.service
       .serviceGeneralGet(`ControlCenter/${this.user.branchId}/${this.matutino}/${task}/${this.user.id}/Manager`)
       .subscribe((resp) => {
@@ -119,11 +138,18 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           this.data.filter(data => data.name === "Volado de efectivo").map(data => {this.completada = data.isComplete;});
           console.log('control volado', this.completada);
           this.notificationVoladoEfectivo();
-         
+          this.load.dismiss();
+          this.segundaCarga(); 
         }
-        console.log('cant', this.cant);
+        else{this.load.dismiss();
+        }
+        
+        
+        
         
       });
+    }
+    else{this.load.dismiss();}
   }
 
   //FUNCIONES DEL TIMER DE VOLADO DE EFECTIVO
@@ -131,6 +157,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.contador = setInterval((n) => { 
       this.turnoActual();
+      this.invMensualActivo();
       this.notificationVoladoEfectivo();
       this.tiempoCaptura();
       console.log('muestra timer'); }, 20000);
@@ -140,6 +167,54 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
     this.contador1 = setInterval((n) => { 
       this.audio.play('alerta');
       console.log('reproduce timer'); }, 4000);
+  }
+  invMensualActivo(){
+    this.GetCapturaInventario();
+    var Hrs = new Date().getHours();
+    var ampm = Hrs >= 12 ? 'PM' : 'AM';
+
+    this.today = new Date();
+    var tomorrow = new Date();
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() -1);
+    tomorrow.setDate(tomorrow.getDate()+1);
+    var hoy = this.today.getDate();
+    var siguiente = tomorrow.getDate();
+    var ayer = yesterday.getDate();
+    this.getFechaServidor(); 
+    console.log('ayer: ', ayer);
+    console.log('hoy: ', hoy); 
+    console.log('mañana: ', siguiente); 
+
+    if(hoy ==1 ){
+    var time = this.today.getHours();
+    if ( time < 13 && time >=3) {
+      this.activoInv = 1;
+      
+    }
+    else{
+      
+      this.activoInv = 0;
+    }
+    console.log('inv muestra: ', this.activoInv); 
+    }
+    if(this.activoInv == 0){
+      
+      if(ampm == "AM" && Hrs >= 7 && Hrs <= 11 && this.CapturaInv == 1){
+       this.SemInv = true;
+       this.invartsem = this.today.getDay() == 0;
+      }
+      else{
+
+        this.SemInv = false;
+        
+      
+      }
+      console.log('inventario status mat: ', this.SemInv);
+      console.log('ampm: ', ampm);
+      console.log('hrs: ', Hrs);
+      console.log('inventario cap: ', this.CapturaInv);
+    }
   }
   
   stopTimer() {
@@ -194,7 +269,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       console.log('Hora:', time);
       
        
-      if ( time > 6 && time < 17) {
+      if ( time > 2 && time < 17) {
         this.tunoCorre = 1;
         
       }
@@ -209,9 +284,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           this.alertFinal();
         }
 
-        if(this.tunoCorre == 0){
-          this.alertFinal();
-        }  
+
 
   }
   showUsuario(){
@@ -228,7 +301,68 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  GetCapturaInventario(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetTipoInv?id_sucursal=${this.branchId}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          console.log('retorno: ', resp.result);
+          console.log('branch: ', this.branchId);
+          if(resp.result.idSucursal == this.branchId){
+              this.CapturaInv = 1;       
+          }
+          else{
+              this.CapturaInv = 0;  
+          }
+        }
+        
+        console.log('captura inv: ', this.CapturaInv);
+        
+
+      });
+      
+  }
   
+  GetRegistro(){
+    this.service
+      .serviceGeneralGet(`StockChicken/GetRegistro?id_sucursal=${this.user.branch}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.registro = resp.result;
+          if(this.registro.id != 0 ){
+            if(this.registro.procesado == false){
+            console.log('con registro pendiente',this.registro);
+            
+            this.invMensual = true;
+            }
+            else{
+              console.log('registro procesado',this.registro);
+              this.invMensual = true;
+              const fecha1= new Date();
+              const fecha2= new Date(this.registro.dateCaptura);
+
+              
+              var diasdif= fecha1.getTime() - fecha2.getTime();
+	            var contdias = Math.round(diasdif/(1000*60*60*24));
+              console.log('diff: ',contdias);
+              if(contdias < 10){
+                this.invMensual = false;
+              }
+            }
+          }
+          else{
+            this.invMensual = true;
+            console.log('sin registro pendiente');
+          }
+        
+        }
+        else{
+          console.log('sin registro');
+        }
+      });
+      console.log('invMensual: ', this.invMensual);
+  }
 
   async alertFinal(){
     this.stopTimer();
@@ -236,7 +370,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       cssClass: 'custom-alert',
       header: 'IMPORTANTE',
       subHeader: 'TURNO',
-      message: 'SE TERMINO EL HORARIO DE CAPTURA DE TAREAS DEL TURNO VESPERTINO. <BR>TU TURNO FINALIZARA',
+      message: 'SE TERMINO EL HORARIO DE CAPTURA DE TAREAS DEL TURNO MATUTINO. <BR>TU TURNO FINALIZARA',
       mode: 'ios',
       buttons: ['OK'],
     });
@@ -494,7 +628,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   }
 
   getInventario() {
-    this.load.presentLoading('Cargando..');
+    this.load.present('Cargando Inv Diario..');
     this.service
       .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
@@ -503,13 +637,35 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
           this.Inventario.forEach(element => {
             element.cantidad = 0;
           });
-          console.log("objetos inv: ",this.Inventario.length);
+          this.load.dismiss();
+          console.log("objetos inv diarios: ",this.Inventario.length);
         }
+        else{this.load.dismiss();}
         console.log('s ',resp.success);
       });
-    console.log('sin data inventario');
+    console.log('sin data inventario mat');
   }
   
+    getInventarioArtSemMat() {
+    //this.load.present('Cargando Inv Semanal..');
+    this.service
+      .serviceGeneralGet(`StockChicken/GetStockArtSemMat?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          this.inventarioArtSem = resp.result;
+          this.inventarioArtSem.forEach(element => {
+            element.cantidad = 0;
+          });
+          //this.load.dismiss();
+          console.log("objetos inv semanal: ",this.inventarioArtSem.length);
+        }
+        else{//this.load.dismiss();
+          }
+        console.log('s ',resp.success);
+      });
+    console.log('sin data inventario mat');
+  }
+
   showValidaTermina() {
     this.alertController.create({
       cssClass: 'custom-alert',
@@ -584,7 +740,7 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
   terminarTurno() {
     this.stopTimer();
     this.stopaudioLoop();
-    this.router.navigateByUrl('supervisor');
+    this.router.navigateByUrl('login');
   }
   mesas(id: number) {
     var time  = new Date().getHours();
@@ -649,5 +805,73 @@ export class CentroControlMatutinoComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('supervisor/expectativa-venta/1/' + id+'/'+this.ValUsuario);
     }
   }
+
+    stockPolloartSem(id: number) {
+    if(this.inventarioArtSem.length != 0){
+      if (id === null) {
+        id = 0;
+      }
+      this.stopTimer();
+      this.router.navigateByUrl('supervisor/inventario-art-semanal-mat/1/' + id+'/'+this.ValUsuario);
+    }
+  }
+  graficaTiempos() {
+    
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/grafica-tiempos/1/'+this.ValUsuario);
+    
+  }
+  invMensualSucursal(id: number) {
+    if(this.Inventario.length != 0){
+      if (id === null) {
+        id = 0;
+      }
+      else{ id=0;}
+      
+      
+    }
+    if(this.invMensual === true){
+      this.stopTimer();
+      this.router.navigateByUrl('supervisor/inventario-mensual/1/' + id+'/'+this.ValUsuario);
+      }
+  }
+
+  grafica25PTS()
+  {
+    this.stopTimer();
+    this.router.navigateByUrl('supervisor/c25pts/1/'+this.ValUsuario);
+  }
+
+  getFechaServidor()
+{
+  this.service
+  .serviceGeneralGet('StockChicken/getFechaServidor')
+  .subscribe((resp) => {
+    if (resp.success) {
+      let fechaservidor:Date = new Date(resp.date.toString());
+      if(this.today.getDate() == fechaservidor.getDate() && this.today.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == this.today.getFullYear())
+        {
+          this.diferenciaFecha = false; 
+        } else{
+            let todaymenos:Date = new Date(this.today.getTime() - 30 * 60000); 
+            if(todaymenos.getDate() == fechaservidor.getDate() && todaymenos.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymenos.getFullYear())
+              {
+                this.diferenciaFecha = false; 
+              } else
+              {  
+                let todaymas:Date = new Date(this.today.getTime() + 30 * 60000); 
+                if(todaymas.getDate() == fechaservidor.getDate() && todaymas.getMonth() == fechaservidor.getMonth() && fechaservidor.getFullYear() == todaymas.getFullYear())
+                  {
+                    this.diferenciaFecha = false; 
+                  } else
+                  {
+                    this.diferenciaFecha = true;  alert("Configura correctame la fecha en tu dispositivo");
+                  }
+              }
+          }
+    }
+  });
+}
+
 }
 

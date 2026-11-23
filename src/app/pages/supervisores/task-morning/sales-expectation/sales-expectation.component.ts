@@ -9,6 +9,8 @@ import { DialogUpdateStockPolloComponent } from '../../dialog/dialog-update-stoc
 import { AlertController } from '@ionic/angular';
 import { DatePipe, formatNumber } from '@angular/common';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ModalCalculoInventarioComponent } from 'src/app/pages/shared/modal-calculo-inventario/modal-calculo-inventario.component';
+import { param } from 'jquery';
 
 @Component({
   selector: 'app-sales-expectation',
@@ -32,6 +34,10 @@ export class SalesExpectationComponent implements OnInit {
   public strikes: number[] = [];
   handlerRespMessage = '';
   handlerRespValor;
+  recarga = 0;
+  filtro: string = '';
+  public ubicacionesinv:UbicacionInvModel[] = []; 
+
   constructor(
     public router: Router,
     public modalController: ModalController,
@@ -47,11 +53,17 @@ export class SalesExpectationComponent implements OnInit {
     console.log(this.routerActive.snapshot.paramMap.get('id'));
     this.idSucursal = this.routerActive.snapshot.paramMap.get('id');
     this.turno = this.routerActive.snapshot.paramMap.get('turno');
-    this.getData();
+   // this.getData();
     console.log('user: ', this.user);
+    console.log('ionview ');
+    this.getDataInventario();
+
     
   }
-  ngOnInit() { }
+  ngOnInit() 
+  {
+    
+   }
   
   validaO(i){
      if(this.contador[i] >= 3 ){
@@ -64,29 +76,65 @@ export class SalesExpectationComponent implements OnInit {
   }
   
   getData() {
-    this.load.presentLoading('Cargando..');
+    this.load.present('Cargando..'); 
     this.service
       .serviceGeneralGet(`StockChicken/GetStock?id_sucursal=${this.user.branch}&dataBase=${this.user.dataBase}`)
       .subscribe((resp) => {
         if (resp.success) {
           this.data = resp.result;
+          // Función de comparación personalizada
+          const compararPorOrdenamiento = (a, b) => a.orden - b.orden;
+
+          // Aplicar la ordenación al array
+          this.data.sort(compararPorOrdenamiento);
           this.data.forEach(element => {
-            element.cantidad = 0;
+
+          let dataf = this.ubicacionesinv.filter(x=> x.codart == element.codarticulo && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+              if(dataf.length>0)
+                {
+                  element.cantidad = dataf[0].total;
+                }else
+                {
+                  element.cantidad = 0;
+                }
+            
           });
-          console.log(this.data);
+          console.log('data: ',this.data.length);
+          console.log('data: ',this.data);
+          this.load.dismiss(); 
         }
         console.log('s ',resp.success);
       });
     console.log('sin data');
+    
   }
+
+
+  getDataInventario() {
+    this.load.presentLoading('Cargando..');
+    this.service
+      .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+      .subscribe((resp) => {
+        this.ubicacionesinv =resp; 
+        this.getData();    
+      });
+    
+  }
+
 
   return() {
     // window.history.back();
     if (this.turno === '1') {
-      this.router.navigateByUrl('supervisor/control-matutino/tarea/1');
+      this.router.navigateByUrl('supervisor/control-matutino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
     }
     else {
-      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1');
+      this.router.navigateByUrl('supervisor/control-vespertino/tarea/1').then(()=>{
+        location.reload();
+      });;
+      
     }
   }
 
@@ -127,14 +175,17 @@ export class SalesExpectationComponent implements OnInit {
         console.log(resp);
 
         if (resp.success) {
-
+          this.eliminarUbicacionesInv(item.codarticulo);
           this.load.presentLoading('Cantidad Permitida');
           this.presentAlert(i);
           // this.data.status = 'post';
+          this.addInv(item,i);
+        }
+        else{
+          location.reload();
         }
       });
-    console.log('sin data');
-    this.addInv(item,i);
+    
   }
 
   addInv(item,i) {
@@ -150,15 +201,22 @@ export class SalesExpectationComponent implements OnInit {
     this.dataInv.updatedBy = this.user.id;
     this.dataInv.updatedDate = this.createDate;
     console.log('Obj To send  post=> ', this.dataInv);
+    
+
     this.service
       .serviceGeneralPostWithUrl('Inventario', this.dataInv)
       .subscribe((data) => {
         if (data.success) {
-          this.load.presentLoading('Guardando..');
-          console.log('data inventario:', data);
           
+          console.log('data inventario:', data);
+          this.load.dismiss();
+        }
+        else{
+          this.load.dismiss();
+          location.reload();
         }
       });
+      
   }
 
   formartDate() {
@@ -286,9 +344,77 @@ export class SalesExpectationComponent implements OnInit {
       console.log('onDidDismiss resolved with role', role);
       this.contador[i] += 1;
       this.validaO(i);
-      this.ngOnInit();
   }
   
+  filtrarDatos() {
+    if(this.filtro == '')
+    {
+      return this.data
+    } else
+    {
+      return this.data.filter(item => item.descripcion.toUpperCase().includes(this.filtro.toUpperCase()));
+    } 
+  }
+
+  limpiarfiltro()
+  {
+    this.filtro = '';
+    this.filtrarDatos(); 
+  }
+
+async editarvalor(item:any,ida:number, codart:number,i:number)
+{
+   let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  const modal = await this.modalController.create({
+    component: ModalCalculoInventarioComponent,
+    componentProps: {
+      param1: item.descripcion,
+      param2: ida,
+      param3: dataf,
+      vista: 1
+    }
+  });
+  await modal.present();
+
+  const { data } = await modal.onWillDismiss();
+  if(data.guardado)
+    {
+      if(dataf.length==0)
+        {
+          this.service
+          .serviceGeneralGet(`StockChicken/getUbicacionesInventario`)
+          .subscribe((resp) => {
+            this.ubicacionesinv =resp;   
+            item.cantidad = data.total; 
+          });
+        } else
+        {
+          item.cantidad = data.total; 
+            dataf[0].jdata = data.arr; 
+          dataf[0].total = data.total; 
+        }
+    
+     
+    }
+}
+
+eliminarUbicacionesInv(codart:number)
+{
+  
+  let dataf = this.ubicacionesinv.filter(x=> x.codart == codart && x.idu == this.user.id.toString() && x.ids == this.user.branchId.toString() && x.vista == 1);
+  
+  if(dataf.length>0)
+    {
+      this.service
+      .serviceGeneralGet(`StockChicken/EliminarUbicacionesInventario/${dataf[0].id}`)
+      .subscribe((resp) => {
+        if (resp.success) {
+          
+        }
+      });
+    }
+
+}
 
 }
 class InvModel {
@@ -304,3 +430,13 @@ class InvModel {
   updatedBy: number;
   updatedDate: String;
 }
+ class UbicacionInvModel
+ {
+  id:number;
+  codart: number;
+  jdata: string;
+  idu:string;
+  ids:string;
+  vista:number;
+  total:number
+ }

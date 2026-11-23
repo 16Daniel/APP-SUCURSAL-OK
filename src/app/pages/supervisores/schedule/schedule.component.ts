@@ -18,6 +18,7 @@ export class ScheduleComponent implements OnInit {
   public branchId;
   // public nameBranch = '';
   public tunoCorre = 0;
+
   public today;
   public contador = null;
 
@@ -29,7 +30,6 @@ export class ScheduleComponent implements OnInit {
 
   ngOnInit() {
 
-    this.validaTurno(); 
     this.user = JSON.parse(localStorage.getItem('userData'));
     console.log('user', this.user);
     // obtener el nombre de sucursal
@@ -40,7 +40,8 @@ export class ScheduleComponent implements OnInit {
     } else if (this.platform.is('ios')) {
       this.showHeader = true;
     }
-    this.startTimer();
+    //this.startTimer();
+    this.validaTurno();
   }
 
   selecSchedule() {
@@ -81,7 +82,7 @@ export class ScheduleComponent implements OnInit {
       console.log('Hora:', time);
       
        
-      if ( time > 6 && time < 17) {
+      if ( time >= 3 && time < 17) {
         this.tunoCorre = 1;
         console.log('Turno', this.tunoCorre);
       }

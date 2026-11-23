@@ -1,0 +1,71 @@
+ion-content {
+  --ion-background-color: #fafafa;
+}
+ion-header {
+  background-color: #fafafa;
+}
+ion-footer {
+  background-color: #fafafa;
+}
+.title {
+  color: #ad182d;
+  font-weight: bold;
+  font-size: 400%;
+  margin-left: 5px;
+}
+.subtitle-negro {
+  color: black;
+  font-weight: bold;
+  font-size: large;
+  font-size: 200%;
+}
+.description{
+  color: #ad182d;
+  font-size: 120%;
+  font-weight: bold;
+}
+.date-grey {
+  font-weight: 500;
+  color: grey;
+  font-size: 150%;
+}
+.money{
+  color: grey;
+  font-weight: bold;
+}
+.return {
+  color: #d0122d;
+}
+.footer {
+  position: absolute;
+  width: 100%;
+  bottom: 10px;
+  left: 0;
+}
+.color-text-white {
+  color: white;
+}
+.title-red {
+  color: #ad182d;
+}
+.title-tareas {
+  color: #1d1d1b;
+  font-weight: bold;
+  margin: 0px;
+}
+.title-progress-bar {
+  color: #808289;
+}
+.margin-completado {
+  text-align: end;
+  margin-top: -14px;
+}
+
+.align-end-text {
+  text-align: end;
+}
+ion-button[shape=circle] {
+  --border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}

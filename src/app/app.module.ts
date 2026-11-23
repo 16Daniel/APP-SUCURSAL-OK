@@ -34,7 +34,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormatePipePipe } from './pages/shared/formate-pipe.pipe';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
-
+import { ModalCalculoInventarioComponent } from './pages/shared/modal-calculo-inventario/modal-calculo-inventario.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +49,7 @@ import { NativeAudio } from '@ionic-native/native-audio/ngx';
     OpenTicketComponent,
     DialogViewTransferComponent,
     FormatePipePipe,
+    ModalCalculoInventarioComponent
   ],
   entryComponents: [],
   imports: [

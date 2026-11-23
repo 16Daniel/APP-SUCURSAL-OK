@@ -1,0 +1,263 @@
+<ion-app>
+  <ion-header class="ion-no-border ion-padding">
+    <ion-grid>
+
+      <ion-row size="12">
+        <ion-col size="3">
+          <div>
+            <!-- <p (click)="return()" class="ion-align-items-start return">
+              < REGRESAR</p> -->
+              <ion-button (click)="return()" shape="round" color="warning" expand="full" size="small">
+                REGRESAR
+              </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="9"></ion-col>
+      </ion-row>
+      <br>
+      
+      <ion-row size="12">
+        <ion-col size="1">
+          <img src="./assets/icon/ilustracion_stock_de_pollo.png" alt="Espectativa de venta" />
+        </ion-col>
+        
+        <ion-col size="11" class="ion-align-self-center">
+          
+          <h5 class="title fs-3 ms-1 fw-bold">INV. MAT SEMANAL</h5>
+          <h5 class="title fs-3 ms-1 fw-bold">V1.25</h5>
+        </ion-col>
+      </ion-row>
+      <!-- titulo de empresa -->
+      <ion-row size="12" *ngIf="user" id="dateInf">
+        <ion-col size="9">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
+        </ion-col>
+        <ion-col size="3">
+          <span class="date-grey">
+            {{ today | date: "dd/MM/yyy" }}
+          </span>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-header>
+  <ion-content fullscreen="false" class="ion-padding">
+    <ion-grid>
+       
+      <ion-row>
+        <ion-col size="12" class="ion-align-self-center">
+          <input [(ngModel)]="filtro" placeholder="Escribe para filtrar" class="i-filter">
+          <button (click)="limpiarfiltro()" *ngIf="this.filtro !='' " class="btn-f">
+            BORRAR FILTRO
+          </button>
+        </ion-col>  
+      </ion-row>
+     
+      <ion-row size="12">
+        <ion-col size="3" class="ion-align-self-center">
+          <span>PRODUCTO:</span>
+        </ion-col>
+        <ion-col size="3" class="ion-align-self-center">
+          <span>UDS:</span>
+        </ion-col>
+        <ion-col size="6" class="ion-align-self-center">
+        </ion-col>
+      </ion-row>
+      <br>
+      <div *ngIf="data !== []" id="datosInv">
+        <ion-row size="12" class="my-3" *ngFor="let item of filtrarDatos();  let i=index;">
+
+          <ion-col size="3" class="ion-align-self-center">
+            
+          </ion-col>
+          <ion-col size="3" class="ion-align-self-center">
+            
+          </ion-col>
+          <ion-col size="6" class="ion-align-self-center">INTENTOS: 
+            <ion-button shape="circle" color="success" *ngIf="this.strikes[i] === 1">1</ion-button>
+            <ion-button shape="circle" color="warning" *ngIf="this.strikes[i] === 2">2</ion-button>
+            <ion-button shape="circle" color="danger" *ngIf="this.strikes[i] === 3">3</ion-button>
+          </ion-col>
+
+          <ion-col size="3" class="ion-align-self-center">
+            <ion-label floating>{{item.descripcion}}</ion-label>
+          </ion-col>
+          <ion-col size="3">
+            <ion-row size="12">
+              <ion-col size="9" class="ion-align-self-center">
+                <ion-card class="closed">
+                  <ion-input [(ngModel)]="item.cantidad" type="number" min="0" required placeholder="UDS"  disabled>
+                  </ion-input>
+                </ion-card>
+              </ion-col>
+              <ion-col size="3" class="ion-align-self-center">
+                <span> {{item.unidadmedida}}</span>
+              </ion-col>
+            </ion-row>
+            <!-- <ion-label style="color: #ad182d; font-size: 12px" *ngIf="activeAmount">Campo requerido</ion-label> -->
+          </ion-col>
+          <ion-col size="3" class="ion-align-self-center" *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="validarCantidad(item, i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false" >
+              Validar
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="1" class="ion-align-self-center"  *ngIf="this.validado[i] == undefined || this.validado[i] != false" >
+            <ion-button (click)="editarvalor(item,item.codarticulo,item.codarticulo,i)" shape="round" color="warning" expand="full" [disabled]="this.validado[i] === false">
+              <i class='bx bxs-edit bx-sm' ></i>
+            </ion-button>
+          </ion-col>
+          <!-- <ion-col size="2" class="ion-align-self-center">
+            <span *ngIf="data.status === 'update'">Hay una diferencia de {{item.diferencia}} {{item.unidadessat}} entre
+              el sistema de Gestión de
+              Restaurantes e
+              ICG</span>
+            <span *ngIf="data.status! === 'post'">Cantidad Permitida</span>
+          </ion-col> -->
+
+          <ion-col size="3" class="ion-align-self-center">
+            <ion-button (click)="save(item,i)" shape="round" color="danger" expand="full" *ngIf=" 3 == this.contador[i]">
+              Guardar
+            </ion-button>
+            <ion-button shape="rounded-pill" color="success" *ngIf="this.contador[i] > 3">SE GUARDO CORRECTAMENTE</ion-button>
+          </ion-col>
+        </ion-row>
+        <!-- </ng-template> -->
+
+
+        <br>
+      </div>
+    </ion-grid>
+  </ion-content>
+  <!-- <ion-footer no-border>
+    <ion-grid>
+      <ion-row size="12" class="footer">
+        <ion-col size="3" offset="8">
+          <ion-button shape="round" color="danger" expand="full">
+            GUARDAR
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer> -->
+  <!-- antes -->
+  <!-- <ion-content fullscreen="false" class="ion-padding">
+    <ion-grid>
+      <ion-row size="12" *ngIf="dataStock">
+        <ion-col size="4">
+          <h5 class="subtitle-negro">{{user.branchName}}</h5>
+        </ion-col>
+        <ion-col size="7"></ion-col>
+        <ion-col size="1">
+          <span class="date-grey">
+            {{ today | date: "dd/MM/yyy" }}
+          </span>
+        </ion-col>
+
+        <ion-col size="12">
+          <h5 class="description">REALIZA TUS INVENTARIOS DIARIOS AL FINALIZAR TU TURNO</h5>
+          &nbsp;
+        </ion-col>
+
+        <ion-col size="12">
+          <span class="money"> $ {{dataStock.salesExpectationTotal}} MXN / {{dataStock.amountTotal}} Kg de pollo </span>
+        </ion-col>
+      </ion-row>
+      <ion-row size="12" *ngIf="dataStock">
+        <ion-col size="6">
+          <span class="title-progress-bar">Expectativa de Venta</span>
+          &nbsp;
+          <ion-progress-bar *ngIf="dataStock.completePercentage !== 100" color="warning"
+            value=".{{dataStock.completePercentage}}"></ion-progress-bar>
+          <ion-progress-bar *ngIf="dataStock.completePercentage === 100" color="success"
+            value="{{dataStock.completePercentage}}"></ion-progress-bar>
+          &nbsp;
+          <div class="margin-completado">
+            <span class="title-progress-bar">% {{dataStock.completePercentage | number: '.1-2' }} completado</span>
+          </div>
+        </ion-col>
+        <ion-col size="3" offset="3" class="ion-align-items-center">
+          <div class="align-end-text">
+            <ion-button (click)="addPackage(0)" shape="round" color="warning" expand="full">
+              <span class="color-text-white"> AGREGAR KILOS DE POLLO </span>
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-card *ngFor="let item of data">
+        <ion-row size="12">
+          <ion-item-sliding id="item100">
+            <ion-item>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="1" class="ion-align-self-center">
+                    <div>
+                      <img src="./assets/icon/ilustracion_stock_de_pollo.png" alt="" />
+                    </div>
+                  </ion-col>
+                  <ion-col size="2" class="ion-align-self-center">
+                    <div>
+                      <span>Paquete Polllo</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="1" class="ion-align-self-center">
+                    <div>
+                      <span>{{ item.amount }} Kg</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="2" class="ion-align-self-center">
+                    <div>
+                      <span>{{ item.code }}</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="2" class="ion-align-self-center">
+                    <div>
+                      <span>{{ item.created | date: "dd MMM yyy" }}</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="2" class="ion-align-self-center">
+                    <div>
+                      <span>{{ item.status }}</span>
+
+                    </div>
+                  </ion-col>
+                  <ion-col size="1" class="ion-align-self-center">
+                    <div>
+                      <img *ngIf="
+                          item.status !== 'Utilizado' &&
+                          item.status !== 'En almacén'
+                        " src="./assets/icon/icon_half_2.png" alt="" />
+                      <img *ngIf="item.status === 'Utilizado'" src="./assets/icon/icon_full_2.png" alt="" />
+                      <img *ngIf="item.status === 'En almacen'" src="" alt="" />
+                    </div>
+                  </ion-col>
+                  <ion-col size="1" class="ion-align-self-center">
+                    <div class="align-end-text" *ngIf="
+                        item.status === 'En almacén' ||
+                        item.status !== 'Utilizado'
+                      ">
+                      <ion-icon name="chevron-forward-outline"></ion-icon>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+            <ion-item-options *ngIf="
+                item.status === 'En almacén' || item.status !== 'Utilizado'
+              " side="end">
+              <ion-item-option color="success">
+                <ion-icon (click)="addPackage(item.id)" slot="icon-only" src="./assets/icon/icon_full.svg"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="warning">
+                <ion-icon (click)="addPackage(item.id)" slot="icon-only" src="./assets/icon/icon_half.svg"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="danger">
+                <ion-icon (click)="deletePackage(item.id)" slot="icon-only" src="./assets/icon/icon_borrar_2.svg">
+                </ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-row>
+      </ion-card>
+    </ion-grid>
+  </ion-content> -->
+</ion-app>

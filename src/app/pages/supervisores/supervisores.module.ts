@@ -35,12 +35,18 @@ import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DialogNotificationAlarmComponent } from './dialog/dialog-notification-alarm/dialog-notification-alarm.component';
 import { DialogUpdateStockPolloComponent } from './dialog/dialog-update-stock-pollo/dialog-update-stock-pollo.component';
-
+import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
+import { C25ptsComponent } from './graficas/c25pts/c25pts.component';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { InventarioMensualComponent } from './task-otros/inventario-mensual/inventario-mensual.component';
+import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { InventarioArtSemanalComponent } from './task-evening/inventario-art-semanal/inventario-art-semanal.component';
+import { InventarioArtSemanalMatComponent } from './task-morning/inventario-art-semanal-mat/inventario-art-semanal-mat.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +77,12 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     ResguardoTabletAlarmaComponent,
     DialogNotificationAlarmComponent,
     DialogUpdateStockPolloComponent,
+    GraficaTiemposComponent,
+    C25ptsComponent,
+    InventarioMensualComponent,
+    InventarioRegularizaComponent,
+    InventarioArtSemanalComponent,
+    InventarioArtSemanalMatComponent
   ],
   imports: [
     CommonModule,
@@ -88,7 +100,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
       useFactory: adapterFactory,
     }),
   ],
-  providers: [DatePicker],
+  providers: [DatePicker,NgxChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SupervisoresModule {}

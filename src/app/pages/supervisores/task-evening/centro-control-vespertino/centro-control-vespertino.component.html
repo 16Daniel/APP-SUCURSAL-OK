@@ -23,6 +23,9 @@
             <ion-col size="12">
               <div>
                 <span *ngIf="this.ValUsuario === 1" class="color-text-white-n ">{{user.name}} {{user.lastName}}</span>
+                <p class="text-light fs-5 mt-2">
+                  {{ today | date: "dd/MM/yyy" }}
+                </p>
                 <span *ngIf="this.ValUsuario === 70" class="color-text-white-ca ">CAJERO</span>
                 <span *ngIf="this.ValUsuario === 71" class="color-text-white-cu ">CUBRE SUPERVISOR</span>
               </div>
@@ -62,7 +65,6 @@
           </ion-col>
         </ion-row>
         <!-- iteracion de data  -->
-
         <ion-row size="12">
           <ion-col size="9" class="ion-align-items-start">
             <h2 class="title-red">TURNO VESPERTINO</h2>
@@ -88,26 +90,43 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row size="12">
-
+        
           <!-- ----------- M E N U  S E C C I O N A D O-------------->
           <ion-col size="12">
             <ion-segment mode="ios" scrollable [(ngModel)]="task">
               <ion-row size="12">
-                <ion-col size="6">
+                <ion-col size="4">
                   <ion-segment-button value="1" (click)="getDataControl(1)">
                     <span class="btnMenu">TAREAS</span>
                   </ion-segment-button>
                 </ion-col>
-                <ion-col size="6">
-                  <!-- <ion-segment-button value="2" (click)="getDataControl(2)">
+                <!-- <ion-col size="4">
+                  <ion-segment-button value="2" (click)="getDataControl(2)">
                     <span class="btnMenu">OTROS</span>
-                  </ion-segment-button> -->
+                  </ion-segment-button>
+                </ion-col> -->
+                <ion-col size="4">
+                  <ion-segment-button value="3" (click)="getDataControl(3)">
+                    <span class="btnMenu">REPORTES</span>
+                  </ion-segment-button>
                 </ion-col>
+                <ion-col size="4">
+                  <ion-segment-button value="4" (click)="getDataControl(4)" *ngIf="this.activoInv === 1">
+                    <span class="btnMenu">INVENTARIO</span>
+                  </ion-segment-button>
+                </ion-col>
+
                 
               </ion-row>
             </ion-segment>
           </ion-col>
+
+          <ion-row size="12" *ngIf="diferenciaFecha">
+            <ion-col size="12" class="ion-align-items-start">
+              <h2 class="title-red text-center fs-5 bx-flashing"><i class='bx bx-info-circle bx-sm bx-tada'></i> REVISAR FECHA Y HORA DEL DISPOSITIVO</h2>
+            </ion-col>
+          </ion-row>
+  
 
       <div [ngSwitch]="task">
         <ion-row size="12" *ngSwitchCase="'1'">
@@ -564,7 +583,7 @@
                     <ion-row size="12">
                       <ion-col size="12">
                         <div>
-                          <h3 class="title-tareas">INVENTARIO VESP</h3>
+                          <h3 class="title-tareas">INVENTARIO DIARIO VESP</h3>
                         </div>
                       </ion-col>
 
@@ -579,6 +598,43 @@
                         <div class="margin-completado">
                           <span *ngIf="this.Inventario.length !== 0" class="title-progress-bar">0% COMPLETADO</span>
                           <span *ngIf="this.Inventario.length === 0" class="title-progress-bar">100% COMPLETADO</span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+           <!-- -----------STOCK DE POLLO------------ -->
+          <ion-col size="6" *ngIf="this.SemInv === true && invartsem == true">
+            <ion-card (click)="stockPolloartSem(user.branchId)">
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                   <div *ngIf="this.InventarioArtsem.length !== 0" style="max-width: 111px;"><svg fill="#ffffff" viewBox="-6.08 -6.08 28.16 28.16" id="register-16px" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="0.784"><g id="SVGRepo_bgCarrier" stroke-width="0"><rect x="-6.08" y="-6.08" width="28.16" height="28.16" rx="14.08" fill="#ad182d" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="Path_184" data-name="Path 184" d="M57.5,41a.5.5,0,0,0-.5.5V43H47V31h2v.5a.5.5,0,0,0,.5.5h5a.5.5,0,0,0,.5-.5V31h2v.5a.5.5,0,0,0,1,0v-1a.5.5,0,0,0-.5-.5H55v-.5A1.5,1.5,0,0,0,53.5,28h-3A1.5,1.5,0,0,0,49,29.5V30H46.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5v-2A.5.5,0,0,0,57.5,41ZM50,29.5a.5.5,0,0,1,.5-.5h3a.5.5,0,0,1,.5.5V31H50Zm11.854,4.646-2-2a.5.5,0,0,0-.708,0l-6,6A.5.5,0,0,0,53,38.5v2a.5.5,0,0,0,.5.5h2a.5.5,0,0,0,.354-.146l6-6A.5.5,0,0,0,61.854,34.146ZM54,40V38.707l5.5-5.5L60.793,34.5l-5.5,5.5Zm-2,.5a.5.5,0,0,1-.5.5h-2a.5.5,0,0,1,0-1h2A.5.5,0,0,1,52,40.5Zm0-3a.5.5,0,0,1-.5.5h-2a.5.5,0,0,1,0-1h2A.5.5,0,0,1,52,37.5ZM54.5,35h-5a.5.5,0,0,1,0-1h5a.5.5,0,0,1,0,1Z" transform="translate(-46 -28)"></path> </g></svg></div>
+                    <img *ngIf="this.InventarioArtsem.length === 0" src="./assets/icon/ilustracion_check.png" alt="" />
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div>
+                          <h3 class="title-tareas">INVENTARIO SEMANAL VESP</h3>
+                        </div>
+                      </ion-col>
+
+                      <ion-col size="12">
+                        <span class="title-progress-bar">NIVEL DE PROGRESO</span>
+                        <br>
+                        <ion-progress-bar *ngIf="this.InventarioArtsem.length !== 0" color="danger" value="0">
+                        </ion-progress-bar>
+                        <ion-progress-bar *ngIf="this.InventarioArtsem.length === 0" color="success"value="1">
+                        </ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span *ngIf="this.InventarioArtsem.length !== 0" class="title-progress-bar">0% COMPLETADO</span>
+                          <span *ngIf="this.InventarioArtsem.length === 0" class="title-progress-bar">100% COMPLETADO</span>
                         </div>
                       </ion-col>
                     </ion-row>
@@ -637,7 +693,7 @@
               </ion-row>
             </ion-card-content>
           </ion-card>
-        </ion-col>
+          </ion-col>
 
           <!------RESGUARDO DE TABLETA Y ALARMA-------->
           <ion-col size="6" *ngIf="tabletAlarmaActive === true">
@@ -728,7 +784,146 @@
             </ion-card>
           </ion-col>
 
+          
+        </ion-row>
 
+        <ion-row size="12" *ngSwitchCase="'3'">
+          <!--***** S E C C I O N   R E P O R T E S ******-->
+          
+          <!-------------- GRAFICA TIEMPOS ------------>
+          <!-- *ngIf="data[3]" -->
+          <ion-col size="6">
+            <!-- aqui se envia el id de sucursal -->
+            <!-- data[8].id -->
+            <ion-card (click)="graficaTiempos()">
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <!-- <img *ngIf="this.cant === true" src="./assets/icon/ilustracion_volado_de_efectivo.png" alt="" />
+                    <img *ngIf="this.cant === false" src="./assets/icon/ilustracion_check.png" alt=""/> -->
+                    <img src="./assets/icon/ilustracion_mesas_en_espera.png" alt=""/> 
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div class="valueVolado">
+                          <!-- <h3 class="title-tareas">VOLADO: {{ valueVolado.message | currency}}</h3> -->
+                          <h3 class="title-tareas">TIEMPOS</h3>
+                        </div>
+                      </ion-col>
+                      <ion-col size="12">
+                        <div>
+                          <span>
+                            GRAFICA
+                          </span>
+                        </div>
+                        
+                      </ion-col>
+                      <ion-col size="12">
+                        <span class="title-progress-bar"></span>
+                        <br>
+                        <ion-progress-bar color="medium" [value]="0"></ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span class="title-progress-bar">
+                            
+                          </span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <!-- ----------- PROXIMAMENTE ---------------->
+          <ion-col  size="6">
+            <!-- <ion-card (click)="validacionAsistencia()"> -->
+              <ion-card>
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <img *ngIf="data[0].isComplete === false" src="./assets/icon/proximamente.png" alt="" />
+                    <!-- <img *ngIf="data[0].isComplete === false" src="./assets/icon/ilustracion_asistencias_inc.png" alt="" /> -->
+                    <img *ngIf="data[0].isComplete === true" src="./assets/icon/proximamente.png" alt=""/>
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div>
+                          <h3 class="title-tareas-inact">
+                            PROXIMAMENTE
+                          </h3>
+                        </div>
+                      </ion-col>
+                      <ion-col size="12">
+                        <div>
+                          <span>
+                            PROXIMAMENTE
+                          </span>
+                        </div>
+                        
+                      </ion-col>
+                      <ion-col size="12">
+                        <span class="title-progress-bar"></span>
+                        <br>
+                        <ion-progress-bar color="medium" [value]="0"></ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span class="title-progress-bar">
+                            
+                          </span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>      
+          
+        </ion-row>
+
+        <ion-row size="12" *ngSwitchCase="'4'">
+          <!--***** S E C C I O N   I N V E N T A R I O ******-->
+               
+          <!-- -----------STOCK DE POLLO------------ -->
+          <ion-col size="6" *ngIf="data[0]">
+            <ion-card (click)="invMensualSucursal(user.branchId)">
+              <ion-card-content>
+                <ion-row size="12">
+                  <ion-col size="3" class="ion-align-self-center">
+                    <img *ngIf="this.invMensual === true" src="./assets/icon/ilustracion_stock_de_pollo.png" alt="" />
+                    <img *ngIf="this.invMensual === false" src="./assets/icon/ilustracion_check.png" alt="" />
+                  </ion-col>
+                  <ion-col size="9">
+                    <ion-row size="12">
+                      <ion-col size="12">
+                        <div>
+                          <h3 class="title-tareas">INVENTARIO MENSUAL</h3>
+                        </div>
+                      </ion-col>
+
+                      <ion-col size="12">
+                        <span class="title-progress-bar">NIVEL DE PROGRESO</span>
+                        <br>
+                        <ion-progress-bar *ngIf="this.invMensual === true" color="danger" value="0">
+                        </ion-progress-bar>
+                        <ion-progress-bar *ngIf="this.invMensual === false" color="success"value="1">
+                        </ion-progress-bar>
+                        <br>
+                        <div class="margin-completado">
+                          <span *ngIf="this.invMensual === true" class="title-progress-bar">0% COMPLETADO</span>
+                          <span *ngIf="this.invMensual === false" class="title-progress-bar">100% COMPLETADO</span>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
         </ion-row>
       
 
@@ -887,8 +1082,11 @@
 
 
          </ion-row>
+
+         
         </div>
-      </ion-row>
+        
+     
 
       </ion-grid>
     </div>

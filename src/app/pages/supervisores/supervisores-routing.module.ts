@@ -20,6 +20,12 @@ import { AttendanceValidationComponent } from './task-morning/attendance-validat
 import { WaitTablesComponent } from './task-morning/wait-tables/wait-tables.component';
 import { ResguardoTabletAlarmaComponent } from './task-evening/resguardo-tablet-alarma/resguardo-tablet-alarma.component';
 import { InventarioSemanalComponent } from './task-evening/inventario-semanal/inventario-semanal.component';
+import { GraficaTiemposComponent } from './graficas/grafica-tiempos/grafica-tiempos.component';
+import { C25ptsComponent } from './graficas/c25pts/c25pts.component';
+import { InventarioMensualComponent } from './task-otros/inventario-mensual/inventario-mensual.component';
+import { InventarioRegularizaComponent } from './task-otros/inventario-regulariza/inventario-regulariza.component';
+import { InventarioArtSemanalComponent } from './task-evening/inventario-art-semanal/inventario-art-semanal.component';
+import { InventarioArtSemanalMatComponent } from './task-morning/inventario-art-semanal-mat/inventario-art-semanal-mat.component';
 const routes: Routes = [
   {
     path: '',
@@ -56,6 +62,14 @@ const routes: Routes = [
   {
     path: 'inventario-semanal/:turno/:id/:us',
     component: InventarioSemanalComponent,
+  },
+  {
+    path: 'inventario-mensual/:turno/:id/:us',
+    component: InventarioMensualComponent,
+  },
+  {
+    path: 'inventario-regulariza/:turno/:registro',
+    component: InventarioRegularizaComponent,
   },
   {
     path: 'mesa-espera/:turno/:id/:us',
@@ -100,7 +114,23 @@ const routes: Routes = [
   {
     path: 'resguardo-tableta/:idTablet/alarma/:idAlarma/:us',
     component: ResguardoTabletAlarmaComponent,
-  }
+  },
+  {
+    path: 'grafica-tiempos/:turno/:us',
+    component: GraficaTiemposComponent,
+  },
+  {
+    path: 'c25pts/:turno/:us',
+    component: C25ptsComponent,
+  },
+  {
+    path: 'inventario-art-semanal-mat/:turno/:id/:us',
+    component: InventarioArtSemanalMatComponent,
+  },
+   {
+    path: 'inventario-art-semanal/:turno/:id/:us',
+    component: InventarioArtSemanalComponent,
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
